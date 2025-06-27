@@ -8,11 +8,15 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
+    is_admin = db.Column(db.Boolean, nullable=False, default=False)
 
-    def __init__(self, username: str, password: str):
+    def __init__(
+        self, username: str, password: str, is_admin: bool = False
+    ) -> None:
         super().__init__()
         self.username = username
         self.password = generate_password_hash(password=password)
+        self.is_admin = is_admin
 
     def check_password(self, password: str) -> bool:
         return check_password_hash(pwhash=self.password, password=password)
@@ -32,14 +36,10 @@ class FoodItems(db.Model):
     __tablename__ = "food_item"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), unique=True, nullable=False)
-    amount = db.Column(db.Integer, nullable=False)
 
-    unit_id = db.Column(db.Integer, db.ForeignKey("unit.id"), nullable=False)
-    unit = db.relationship("Units")
-
-    energy = db.Column(db.Float)
-    protein = db.Column(db.Float)
-    carbs = db.Column(db.Float)
-    sugar = db.Column(db.Float)
-    fats = db.Column(db.Float)
-    saturated_fats = db.Column(db.Float)
+    energy_100g = db.Column(db.Float)
+    protein_100g = db.Column(db.Float)
+    carbs_100g = db.Column(db.Float)
+    sugar_100g = db.Column(db.Float)
+    fats_100g = db.Column(db.Float)
+    saturated_fats_100g = db.Column(db.Float)
