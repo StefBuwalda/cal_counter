@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, url_for, request, jsonify
 from flask_login import (
     login_required,
     logout_user,
@@ -6,7 +6,7 @@ from flask_login import (
     current_user,
 )
 from forms import LoginForm
-from models import User
+from models import User, FoodItem
 from application import db, app, login_manager
 from application.admin.routes import admin_bp
 
@@ -43,8 +43,9 @@ def login():
         user = User.query.filter_by(username=form.username.data).first()
         if user and user.check_password(password=form.password.data):
             # User found and password correct
-            login_user(user)
-            return redirect(url_for("dashboard"))
+            next_page = request.args.get("next")  # Get next page if given
+            login_user(user)  # Log in the user
+            return redirect(next_page or url_for("dashboard"))
         else:
             pass
             # invalid user
@@ -62,6 +63,22 @@ def dashboard():
 def logout():
     logout_user()
     return redirect(url_for("index"))
+
+
+@app.route("/scan")
+@login_required
+def scan():
+    return render_template("scan.html")
+
+
+@app.route("/nutri/<int:barcode>", methods=["GET"])
+@login_required
+def nutri(barcode):
+    food = FoodItem.query.filter_by(barcode=barcode).first()
+    if food:
+        return jsonify(food.to_dict())
+    else:
+        return jsonify({})
 
 
 # Run

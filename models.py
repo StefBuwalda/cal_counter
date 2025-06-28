@@ -36,6 +36,7 @@ class Unit(db.Model):
 class FoodItem(db.Model):
     __tablename__ = "food_item"
     id = db.Column(db.Integer, primary_key=True)
+    barcode = db.Column(db.Integer)
     name = db.Column(db.String(150), unique=True, nullable=False)
 
     energy_100g = db.Column(db.Integer, nullable=False)
@@ -52,8 +53,9 @@ class FoodItem(db.Model):
         protein: float,
         carbs: int,
         fats: int,
-        sugar: Optional[int] = False,
-        saturated_fats: Optional[int] = False,
+        sugar: Optional[int] = None,
+        saturated_fats: Optional[int] = None,
+        barcode: Optional[int] = None,
     ):
         self.name = name
         self.energy_100g = energy
@@ -62,3 +64,17 @@ class FoodItem(db.Model):
         self.sugar_100g = sugar
         self.fats_100g = fats
         self.saturated_fats_100g = saturated_fats
+        self.barcode = barcode
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "barcode": self.barcode,
+            "name": self.name,
+            "energy_100g": self.energy_100g,
+            "protein_100g": self.protein_100g,
+            "carbs_100g": self.carbs_100g,
+            "sugar_100g": self.sugar_100g,
+            "fats_100g": self.fats_100g,
+            "saturated_fats_100g": self.saturated_fats_100g,
+        }
