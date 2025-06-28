@@ -8,6 +8,7 @@ from flask_login import (
 from forms import LoginForm
 from models import User
 from application import db, app, login_manager
+from application.admin.routes import admin_bp
 
 # Config
 app.config["SECRET_KEY"] = "Iman"
@@ -18,6 +19,10 @@ login_manager.login_view = "login"  # type: ignore
 @login_manager.user_loader  # type: ignore
 def load_user(user_id: int):
     return db.session.get(User, user_id)
+
+
+# Register blueprints
+app.register_blueprint(admin_bp)
 
 
 # Routes

@@ -1,6 +1,7 @@
 from flask_login import UserMixin  # type: ignore
 from werkzeug.security import generate_password_hash, check_password_hash
 from application import db
+from typing import Optional
 
 
 class User(UserMixin, db.Model):
@@ -25,21 +26,39 @@ class User(UserMixin, db.Model):
         self.password = generate_password_hash(password=password)
 
 
-class Units(db.Model):
+class Unit(db.Model):
     __tablename__ = "unit"
     id = db.Column(db.Integer, primary_key=True)
     symbol = db.Column(db.String(10), unique=True, nullable=False)
     name = db.Column(db.String(50), unique=True, nullable=False)
 
 
-class FoodItems(db.Model):
+class FoodItem(db.Model):
     __tablename__ = "food_item"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), unique=True, nullable=False)
 
-    energy_100g = db.Column(db.Float)
-    protein_100g = db.Column(db.Float)
-    carbs_100g = db.Column(db.Float)
-    sugar_100g = db.Column(db.Float)
-    fats_100g = db.Column(db.Float)
-    saturated_fats_100g = db.Column(db.Float)
+    energy_100g = db.Column(db.Integer, nullable=False)
+    protein_100g = db.Column(db.Float, nullable=False)
+    carbs_100g = db.Column(db.Integer, nullable=False)
+    sugar_100g = db.Column(db.Integer)
+    fats_100g = db.Column(db.Integer, nullable=False)
+    saturated_fats_100g = db.Column(db.Integer)
+
+    def __init__(
+        self,
+        name: str,
+        energy: int,
+        protein: float,
+        carbs: int,
+        fats: int,
+        sugar: Optional[int] = False,
+        saturated_fats: Optional[int] = False,
+    ):
+        self.name = name
+        self.energy_100g = energy
+        self.protein_100g = protein
+        self.carbs_100g = carbs
+        self.sugar_100g = sugar
+        self.fats_100g = fats
+        self.saturated_fats_100g = saturated_fats

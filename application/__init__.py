@@ -2,7 +2,6 @@ from flask import Flask
 from flask_login import LoginManager  # type: ignore
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from application.admin.routes import admin_bp
 
 
 app = Flask(__name__)  # Init Flask app
@@ -13,6 +12,3 @@ db = SQLAlchemy(app=app)  # Init SQLAlchemy
 migrate = Migrate(app=app, db=db)  # Init Migration
 
 login_manager = LoginManager(app=app)  # Init login manager
-
-# Register blueprints
-app.register_blueprint(admin_bp)

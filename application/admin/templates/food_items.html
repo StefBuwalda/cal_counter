@@ -1,5 +1,40 @@
 {% extends "base.html" %}
 
+{% block title %}
+Food Nutritional Info
+{% endblock %}
+
 {% block content %}
-Hallo
+<div class="container mt-5">
+    <h1 class="mb-4">Food Nutritional Information (per 100g)</h1>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Energy (kcal)</th>
+                    <th>Fats (g)</th>
+                    <th>Saturated Fats (g)</th>
+                    <th>Sugars (g)</th>
+                    <th>Carbs (g)</th>
+                    <th>Protein (g)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for food in items %}
+                <tr>
+                    <td>{{ food.name }}</td>
+                    <td>{{ food.energy_100g }}</td>
+                    <td>{{ food.fats_100g }}</td>
+                    <td>{{ food.saturated_fats_100g }}</td>
+                    <td>{{ food.sugar_100g }}</td>
+                    <td>{{ food.carbs_100g }}</td>
+                    <td>{{ food.protein_100g }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 {% endblock%}

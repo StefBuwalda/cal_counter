@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}
+ZXing Barcode Scanner
+{% endblock %}
+
+{% block content %}
+<div class="container text-center">
+    <h1 class="mb-4">📷 ZXing Barcode Scanner</h1>
+
+    <div class="mb-3">
+        <video id="video" class="border rounded shadow-sm" width="100%" style="max-width: 500px;"></video>
+    </div>
+
+    <div class="mb-3">
+        <button id="startButton" class="btn btn-primary">Start Scanning</button>
+        <button id="stopButton" class="btn btn-danger ms-2">Stop</button>
+    </div>
+
+    <div>
+        <h5>Result:</h5>
+        <p id="result" class="fw-bold text-success"></p>
+    </div>
+</div>
+
+<script type="module">
+    import { BrowserMultiFormatReader } from 'https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/+esm';
+
+    const codeReader = new BrowserMultiFormatReader();
+    const videoElement = document.getElementById('video');
+    const resultElement = document.getElementById('result');
+
+    document.getElementById('startButton').addEventListener('click', async () => {
+        await navigator.mediaDevices.getUserMedia({ video: true });
+        console.log('[DEBUG] Start button clicked');
+        const devices = await codeReader.listVideoInputDevices();
+        console.log('[DEBUG] Cameras found:', devices);
+        const selectedDeviceId = devices[0]?.deviceId;
+        if (!selectedDeviceId) {
+            alert('No camera found!');
+            return;
+        }
+        codeReader.decodeFromVideoDevice(selectedDeviceId, videoElement, (result, err, controls) => {
+            if (result) {
+                resultElement.textContent = result.getText();
+                controls.stop();
+            }
+        });
+    });
+
+    document.getElementById('stopButton').addEventListener('click', () => {
+        codeReader.reset();
+        resultElement.textContent = '';
+    });
+</script>
+{% endblock %}
