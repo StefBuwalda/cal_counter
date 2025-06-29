@@ -33,11 +33,16 @@ def delete_food_item(barcode: int):
     return redirect(url_for("user.dashboard"))
 
 
-def edit_helper(form: FoodItemForm, item) -> bool:
-    change = False
-    for item in form:
-        print(item)
-    return change
+fields = [
+    "barcode",
+    "name",
+    "energy",
+    "protein",
+    "carbs",
+    "sugar",
+    "fat",
+    "saturated_fat",
+]
 
 
 @user_bp.route("/edit_food_item/<int:barcode>", methods=["GET", "POST"])
@@ -46,18 +51,17 @@ def edit_food_item(barcode: int):
     if item:
         form = FoodItemForm()
         if form.validate_on_submit():
-            edit_helper(form, item)
+            item.updateFromForm(form=form)
+            db.session.commit()
             return redirect(url_for("user.dashboard"))
-        form = FoodItemForm(
-            barcode=item.barcode,
-            name=item.name,
-            energy=item.energy_100g,
-            protein=item.protein_100g,
-            carbs=item.carbs_100g,
-            sugar=item.sugar_100g,
-            fat=item.fats_100g,
-            saturated_fat=item.saturated_fats_100g,
-        )
+        form.barcode.data = item.barcode
+        form.name.data = item.name
+        form.energy.data = item.energy_100g
+        form.protein.data = item.protein_100g
+        form.carbs.data = item.carbs_100g
+        form.sugar.data = item.sugar_100g
+        form.fat.data = item.fats_100g
+        form.saturated_fat.data = item.saturated_fats_100g
         return render_template("edit_food_item.html", form=form)
     else:
         return redirect(url_for("user.dashboard"))

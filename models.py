@@ -2,6 +2,7 @@ from flask_login import UserMixin  # type: ignore
 from werkzeug.security import generate_password_hash, check_password_hash
 from application import db
 from typing import Optional
+from forms import FoodItemForm
 
 
 class User(UserMixin, db.Model):
@@ -74,6 +75,15 @@ class FoodItem(db.Model):
         self.fats_100g = fats
         self.saturated_fats_100g = saturated_fats
         self.barcode = barcode
+
+    def updateFromForm(self, form: FoodItemForm):
+        self.name = form.name.data
+        self.energy_100g = form.energy.data
+        self.protein_100g = form.protein.data
+        self.carbs_100g = form.carbs.data
+        self.sugar_100g = form.sugar.data
+        self.fats_100g = form.fat.data
+        self.saturated_fats_100g = form.saturated_fat.data
 
     def to_dict(self):
         return {
