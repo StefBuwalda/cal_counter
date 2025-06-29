@@ -56,12 +56,12 @@ def edit_food_item(barcode: int):
             return redirect(url_for("user.dashboard"))
         form.barcode.data = item.barcode
         form.name.data = item.name
-        form.energy.data = item.energy_100g
-        form.protein.data = item.protein_100g
-        form.carbs.data = item.carbs_100g
-        form.sugar.data = item.sugar_100g
-        form.fat.data = item.fats_100g
-        form.saturated_fat.data = item.saturated_fats_100g
+        form.energy.data = item.energy_100
+        form.protein.data = item.protein_100
+        form.carbs.data = item.carbs_100
+        form.sugar.data = item.sugar_100
+        form.fat.data = item.fat_100
+        form.saturated_fat.data = item.saturated_fat_100
         return render_template("edit_food_item.html", form=form)
     else:
         return redirect(url_for("user.dashboard"))

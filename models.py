@@ -43,12 +43,12 @@ class FoodItem(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     name = db.Column(db.String(150), nullable=False)
 
-    energy_100g = db.Column(db.Integer, nullable=False)
-    protein_100g = db.Column(db.Float, nullable=False)
-    carbs_100g = db.Column(db.Float, nullable=False)
-    sugar_100g = db.Column(db.Float)
-    fats_100g = db.Column(db.Float, nullable=False)
-    saturated_fats_100g = db.Column(db.Float)
+    energy_100 = db.Column(db.Integer, nullable=False)
+    protein_100 = db.Column(db.Float, nullable=False)
+    carbs_100 = db.Column(db.Float, nullable=False)
+    sugar_100 = db.Column(db.Float)
+    fat_100 = db.Column(db.Float, nullable=False)
+    saturated_fat_100 = db.Column(db.Float)
 
     __table_args__ = (
         db.UniqueConstraint("barcode", "owner_id", name="barcode_owner_key"),
@@ -61,29 +61,29 @@ class FoodItem(db.Model):
         energy: int,
         protein: float,
         carbs: float,
-        fats: float,
+        fat: float,
         barcode: int,
         sugar: Optional[float] = None,
-        saturated_fats: Optional[float] = None,
+        saturated_fat: Optional[float] = None,
     ):
         self.name = name
         self.owner_id = owner_id
-        self.energy_100g = energy
-        self.protein_100g = protein
-        self.carbs_100g = carbs
-        self.sugar_100g = sugar
-        self.fats_100g = fats
-        self.saturated_fats_100g = saturated_fats
+        self.energy_100 = energy
+        self.protein_100 = protein
+        self.carbs_100 = carbs
+        self.sugar_100 = sugar
+        self.fat_100 = fat
+        self.saturated_fat_100 = saturated_fat
         self.barcode = barcode
 
     def updateFromForm(self, form: FoodItemForm):
         self.name = form.name.data
-        self.energy_100g = form.energy.data
-        self.protein_100g = form.protein.data
-        self.carbs_100g = form.carbs.data
-        self.sugar_100g = form.sugar.data
-        self.fats_100g = form.fat.data
-        self.saturated_fats_100g = form.saturated_fat.data
+        self.energy_100 = form.energy.data
+        self.protein_100 = form.protein.data
+        self.carbs_100 = form.carbs.data
+        self.sugar_100 = form.sugar.data
+        self.fat_100 = form.fat.data
+        self.saturated_fat_100 = form.saturated_fat.data
 
     def to_dict(self):
         return {
@@ -91,10 +91,10 @@ class FoodItem(db.Model):
             "barcode": self.barcode,
             "name": self.name,
             "owner_id": self.owner_id,
-            "energy_100g": self.energy_100g,
-            "protein_100g": self.protein_100g,
-            "carbs_100g": self.carbs_100g,
-            "sugar_100g": self.sugar_100g,
-            "fats_100g": self.fats_100g,
-            "saturated_fats_100g": self.saturated_fats_100g,
+            "energy_100": self.energy_100,
+            "protein_100": self.protein_100,
+            "carbs_100": self.carbs_100,
+            "sugar_100": self.sugar_100,
+            "fat_100": self.fat_100,
+            "saturated_fat_100": self.saturated_fat_100,
         }

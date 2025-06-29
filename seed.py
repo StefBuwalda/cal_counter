@@ -12,10 +12,10 @@ with app.app_context():
             name="AH Matcha cookie",
             owner_id=1,
             energy=430,
-            fats=19,
+            fat=19,
             carbs=59,
             protein=5.5,
-            saturated_fats=10,
+            saturated_fat=10,
             sugar=35,
             barcode=2278012003502,
         )

@@ -123,9 +123,9 @@ def add_food_item():
                     energy=form.energy.data,
                     protein=form.protein.data,
                     carbs=form.carbs.data,
-                    fats=form.fat.data,
+                    fat=form.fat.data,
                     barcode=form.barcode.data,
-                    saturated_fats=form.saturated_fat.data,
+                    saturated_fat=form.saturated_fat.data,
                     sugar=form.sugar.data,
                 )
             )

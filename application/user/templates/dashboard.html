@@ -13,8 +13,8 @@ Food Nutritional Info
                 <tr>
                     <th>Name</th>
                     <th>Energy (kcal)</th>
-                    <th>Fats (g)</th>
-                    <th>Saturated Fats (g)</th>
+                    <th>fat (g)</th>
+                    <th>Saturated fat (g)</th>
                     <th>Sugars (g)</th>
                     <th>Carbs (g)</th>
                     <th>Protein (g)</th>
@@ -25,12 +25,12 @@ Food Nutritional Info
                 {% for food in items %}
                 <tr>
                     <td class="bg-body-tertiary">{{ food.name }}</td>
-                    <td class="bg-body-tertiary">{{ food.energy_100g }}</td>
-                    <td class="bg-body-tertiary">{{ food.fats_100g }}</td>
-                    <td class="bg-body-tertiary">{{ food.saturated_fats_100g }}</td>
-                    <td class="bg-body-tertiary">{{ food.sugar_100g }}</td>
-                    <td class="bg-body-tertiary">{{ food.carbs_100g }}</td>
-                    <td class="bg-body-tertiary">{{ food.protein_100g }}</td>
+                    <td class="bg-body-tertiary">{{ food.energy_100 }}</td>
+                    <td class="bg-body-tertiary">{{ food.fat_100 }}</td>
+                    <td class="bg-body-tertiary">{{ food.saturated_fat_100 }}</td>
+                    <td class="bg-body-tertiary">{{ food.sugar_100 }}</td>
+                    <td class="bg-body-tertiary">{{ food.carbs_100 }}</td>
+                    <td class="bg-body-tertiary">{{ food.protein_100 }}</td>
                     <td class="bg-body-tertiary">
                         <div class="d-flex gap-1">
                             <form method="GET" action="{{ url_for('user.edit_food_item', barcode=food.barcode) }}">
