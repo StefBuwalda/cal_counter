@@ -39,7 +39,7 @@ class Unit(db.Model):
 class FoodItem(db.Model):
     __tablename__ = "food_item"
     id = db.Column(db.Integer, primary_key=True)
-    barcode = db.Column(db.Integer, nullable=False)
+    barcode = db.Column(db.Integer)
     owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     name = db.Column(db.String(150), nullable=False)
 
@@ -62,7 +62,7 @@ class FoodItem(db.Model):
         protein: float,
         carbs: float,
         fat: float,
-        barcode: int,
+        barcode: Optional[int] = None,
         sugar: Optional[float] = None,
         saturated_fat: Optional[float] = None,
     ):

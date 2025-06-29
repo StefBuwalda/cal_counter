@@ -115,7 +115,6 @@ def add_food_item():
             assert form.protein.data is not None
             assert form.carbs.data is not None
             assert form.fat.data is not None
-            assert form.barcode.data is not None
             db.session.add(
                 FoodItem(
                     name=form.name.data,
