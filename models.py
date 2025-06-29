@@ -11,6 +11,8 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String, nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
 
+    food_items = db.relationship("FoodItem", lazy="dynamic")
+
     def __init__(
         self, username: str, password: str, is_admin: bool = False
     ) -> None:
@@ -37,7 +39,8 @@ class FoodItem(db.Model):
     __tablename__ = "food_item"
     id = db.Column(db.Integer, primary_key=True)
     barcode = db.Column(db.Integer, nullable=False)
-    name = db.Column(db.String(150), unique=True, nullable=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    name = db.Column(db.String(150), nullable=False)
 
     energy_100g = db.Column(db.Integer, nullable=False)
     protein_100g = db.Column(db.Float, nullable=False)
@@ -46,9 +49,14 @@ class FoodItem(db.Model):
     fats_100g = db.Column(db.Float, nullable=False)
     saturated_fats_100g = db.Column(db.Float)
 
+    __table_args__ = (
+        db.UniqueConstraint("barcode", "owner_id", name="barcode_owner_key"),
+    )
+
     def __init__(
         self,
         name: str,
+        owner_id: int,
         energy: int,
         protein: float,
         carbs: float,
@@ -58,6 +66,7 @@ class FoodItem(db.Model):
         saturated_fats: Optional[float] = None,
     ):
         self.name = name
+        self.owner_id = owner_id
         self.energy_100g = energy
         self.protein_100g = protein
         self.carbs_100g = carbs
@@ -71,6 +80,7 @@ class FoodItem(db.Model):
             "id": self.id,
             "barcode": self.barcode,
             "name": self.name,
+            "owner_id": self.owner_id,
             "energy_100g": self.energy_100g,
             "protein_100g": self.protein_100g,
             "carbs_100g": self.carbs_100g,

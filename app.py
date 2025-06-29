@@ -9,6 +9,7 @@ from forms import LoginForm, FoodItemForm
 from models import User, FoodItem
 from application import db, app, login_manager
 from application.admin.routes import admin_bp
+from application.user.routes import user_bp
 from typing import Optional
 
 # Config
@@ -24,6 +25,7 @@ def load_user(user_id: int):
 
 # Register blueprints
 app.register_blueprint(admin_bp)
+app.register_blueprint(user_bp)
 
 
 # Routes
@@ -60,12 +62,6 @@ def login():
             pass
             # invalid user
     return render_template("login.html", form=form)
-
-
-@app.route("/dashboard")
-@login_required
-def dashboard():
-    return render_template("dashboard.html", name=current_user.username)
 
 
 @app.route("/logout")
@@ -122,6 +118,7 @@ def add_food_item():
             db.session.add(
                 FoodItem(
                     name=form.name.data,
+                    owner_id=current_user.id,
                     energy=form.energy.data,
                     protein=form.protein.data,
                     carbs=form.carbs.data,
