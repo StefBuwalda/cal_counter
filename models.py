@@ -36,26 +36,26 @@ class Unit(db.Model):
 class FoodItem(db.Model):
     __tablename__ = "food_item"
     id = db.Column(db.Integer, primary_key=True)
-    barcode = db.Column(db.Integer)
+    barcode = db.Column(db.Integer, nullable=False)
     name = db.Column(db.String(150), unique=True, nullable=False)
 
     energy_100g = db.Column(db.Integer, nullable=False)
     protein_100g = db.Column(db.Float, nullable=False)
-    carbs_100g = db.Column(db.Integer, nullable=False)
-    sugar_100g = db.Column(db.Integer)
-    fats_100g = db.Column(db.Integer, nullable=False)
-    saturated_fats_100g = db.Column(db.Integer)
+    carbs_100g = db.Column(db.Float, nullable=False)
+    sugar_100g = db.Column(db.Float)
+    fats_100g = db.Column(db.Float, nullable=False)
+    saturated_fats_100g = db.Column(db.Float)
 
     def __init__(
         self,
         name: str,
         energy: int,
         protein: float,
-        carbs: int,
-        fats: int,
-        sugar: Optional[int] = None,
-        saturated_fats: Optional[int] = None,
-        barcode: Optional[int] = None,
+        carbs: float,
+        fats: float,
+        barcode: int,
+        sugar: Optional[float] = None,
+        saturated_fats: Optional[float] = None,
     ):
         self.name = name
         self.energy_100g = energy

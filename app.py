@@ -5,10 +5,11 @@ from flask_login import (
     login_user,
     current_user,
 )
-from forms import LoginForm
+from forms import LoginForm, FoodItemForm
 from models import User, FoodItem
 from application import db, app, login_manager
 from application.admin.routes import admin_bp
+from typing import Optional
 
 # Config
 app.config["SECRET_KEY"] = "Iman"
@@ -28,7 +29,16 @@ app.register_blueprint(admin_bp)
 # Routes
 
 
+def default_return(next_page: Optional[str] = None):
+    if next_page:
+        return redirect(next_page)
+    if current_user.is_admin:
+        return redirect(url_for("admin.food_items"))
+    return redirect(url_for("dashboard"))
+
+
 @app.route("/")
+@login_required
 def index():
     return render_template("index.html")
 
@@ -36,7 +46,7 @@ def index():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("dashboard"))
+        return default_return()
 
     form = LoginForm()
     if form.validate_on_submit():
@@ -45,7 +55,7 @@ def login():
             # User found and password correct
             next_page = request.args.get("next")  # Get next page if given
             login_user(user)  # Log in the user
-            return redirect(next_page or url_for("dashboard"))
+            return default_return(next_page=next_page)
         else:
             pass
             # invalid user
@@ -79,6 +89,56 @@ def nutri(barcode):
         return jsonify(food.to_dict())
     else:
         return jsonify({})
+
+
+@app.route("/food_item/<int:barcode>", methods=["GET"])
+@login_required
+def food_item(barcode):
+    food = FoodItem.query.filter_by(barcode=barcode).first()
+    if food:
+        return render_template("food_item.html", item=food)
+    else:
+        return render_template(
+            "add_food_item.html",
+            barcode=barcode,
+            form=FoodItemForm(barcode=barcode),
+        )
+
+
+@app.route("/add_food_item", methods=["POST"])
+@login_required
+def add_food_item():
+    form = FoodItemForm()
+
+    if form.validate_on_submit():
+        print("[DEBUG] Valid form")
+        if FoodItem.query.filter_by(barcode=form.barcode.data).first() is None:
+            assert form.name.data is not None
+            assert form.energy.data is not None
+            assert form.protein.data is not None
+            assert form.carbs.data is not None
+            assert form.fat.data is not None
+            assert form.barcode.data is not None
+            db.session.add(
+                FoodItem(
+                    name=form.name.data,
+                    energy=form.energy.data,
+                    protein=form.protein.data,
+                    carbs=form.carbs.data,
+                    fats=form.fat.data,
+                    barcode=form.barcode.data,
+                    saturated_fats=form.saturated_fat.data,
+                    sugar=form.sugar.data,
+                )
+            )
+            db.session.commit()
+            print("[DEBUG] New item added")
+    else:
+        print("[DEBUG] Invalid form")
+    if form.barcode.data:
+        return redirect(url_for("food_item", barcode=form.barcode.data))
+    else:
+        return redirect(url_for("scan"))
 
 
 # Run

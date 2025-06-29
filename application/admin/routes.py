@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, abort
+from flask import Blueprint, render_template, abort, redirect, url_for
 from flask_login import current_user
 from models import FoodItem
+from application import db
 
 admin_bp = Blueprint(
     "admin",
@@ -25,3 +26,12 @@ def food_items():
 @admin_bp.route("/barcode_test", methods=["GET"])
 def barcode_test():
     return render_template("barcode_test.html")
+
+
+@admin_bp.route("/delete_food/<int:id>", methods=["POST"])
+def delete_food(id):
+    item = FoodItem.query.get(id)
+    if item:
+        db.session.delete(item)
+        db.session.commit()
+    return redirect(url_for("admin.food_items"))
