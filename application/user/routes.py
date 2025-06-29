@@ -49,6 +49,42 @@ fields = [
 ]
 
 
+@user_bp.route("/add_food_item", methods=["POST"])
+def add_food_item():
+    form = FoodItemForm()
+
+    if form.validate_on_submit():
+        print("[DEBUG] Valid form")
+        if FoodItem.query.filter_by(barcode=form.barcode.data).first() is None:
+            assert form.name.data is not None
+            assert form.energy.data is not None
+            assert form.protein.data is not None
+            assert form.carbs.data is not None
+            assert form.fat.data is not None
+            db.session.add(
+                FoodItem(
+                    name=form.name.data,
+                    owner_id=current_user.id,
+                    energy=form.energy.data,
+                    protein=form.protein.data,
+                    carbs=form.carbs.data,
+                    fat=form.fat.data,
+                    barcode=form.barcode.data,
+                    saturated_fat=form.saturated_fat.data,
+                    sugar=form.sugar.data,
+                )
+            )
+            db.session.commit()
+            print("[DEBUG] New item added")
+            return redirect(url_for("food_item", barcode=form.barcode.data))
+    else:
+        print("[DEBUG] Invalid form")
+    if form.barcode.data:
+        return redirect(url_for("food_item", barcode=form.barcode.data))
+    else:
+        return redirect(url_for("scan"))
+
+
 @user_bp.route("/edit_food_item/<int:id>", methods=["GET", "POST"])
 def edit_food_item(id: int):
     item = FoodItem.query.get(id)
@@ -69,6 +105,19 @@ def edit_food_item(id: int):
             form.saturated_fat.data = item.saturated_fat_100
             return render_template("edit_food_item.html", form=form)
     return redirect(url_for("user.dashboard"))
+
+
+@user_bp.route("/food_item/<int:barcode>", methods=["GET"])
+def food_item(barcode):
+    food = FoodItem.query.filter_by(barcode=barcode).first()
+    if food:
+        return render_template("food_item.html", item=food)
+    else:
+        return render_template(
+            "add_food_item.html",
+            barcode=barcode,
+            form=FoodItemForm(barcode=barcode),
+        )
 
 
 @user_bp.route("/add_food_item_manual", methods=["GET", "POST"])

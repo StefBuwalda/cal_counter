@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<form method="POST" action="{{ url_for('add_food_item') }}">
+<form method="POST" action="{{ url_for('user.add_food_item') }}">
     {{ form.hidden_tag() }}
 
     <div class="mb-3">

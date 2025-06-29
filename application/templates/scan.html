@@ -45,7 +45,7 @@
         await codeReader.decodeFromVideoDevice(selectedDeviceId, videoElement, async (result, err) => {
             if (result) {
                 const codeText = result.getText();
-                const baseURL = "{{url_for('food_item', barcode='0')}}"
+                const baseURL = "{{url_for('user.food_item', barcode='0')}}"
                 window.location.href = baseURL.replace("0", encodeURIComponent(codeText))
             }
         });

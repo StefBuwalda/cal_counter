@@ -1,12 +1,12 @@
-from flask import render_template, redirect, url_for, request, jsonify
+from flask import render_template, redirect, url_for, request
 from flask_login import (
     login_required,
     logout_user,
     login_user,
     current_user,
 )
-from forms import LoginForm, FoodItemForm
-from models import User, FoodItem
+from forms import LoginForm
+from models import User
 from application import db, app, login_manager
 from application.admin.routes import admin_bp
 from application.user.routes import user_bp
@@ -76,67 +76,6 @@ def logout():
 @login_required
 def scan():
     return render_template("scan.html")
-
-
-@app.route("/nutri/<int:barcode>", methods=["GET"])
-@login_required
-def nutri(barcode):
-    food = FoodItem.query.filter_by(barcode=barcode).first()
-    if food:
-        return jsonify(food.to_dict())
-    else:
-        return jsonify({})
-
-
-@app.route("/food_item/<int:barcode>", methods=["GET"])
-@login_required
-def food_item(barcode):
-    food = FoodItem.query.filter_by(barcode=barcode).first()
-    if food:
-        return render_template("food_item.html", item=food)
-    else:
-        return render_template(
-            "add_food_item.html",
-            barcode=barcode,
-            form=FoodItemForm(barcode=barcode),
-        )
-
-
-@app.route("/add_food_item", methods=["POST"])
-@login_required
-def add_food_item():
-    form = FoodItemForm()
-
-    if form.validate_on_submit():
-        print("[DEBUG] Valid form")
-        if FoodItem.query.filter_by(barcode=form.barcode.data).first() is None:
-            assert form.name.data is not None
-            assert form.energy.data is not None
-            assert form.protein.data is not None
-            assert form.carbs.data is not None
-            assert form.fat.data is not None
-            db.session.add(
-                FoodItem(
-                    name=form.name.data,
-                    owner_id=current_user.id,
-                    energy=form.energy.data,
-                    protein=form.protein.data,
-                    carbs=form.carbs.data,
-                    fat=form.fat.data,
-                    barcode=form.barcode.data,
-                    saturated_fat=form.saturated_fat.data,
-                    sugar=form.sugar.data,
-                )
-            )
-            db.session.commit()
-            print("[DEBUG] New item added")
-            return redirect(url_for("food_item", barcode=form.barcode.data))
-    else:
-        print("[DEBUG] Invalid form")
-    if form.barcode.data:
-        return redirect(url_for("food_item", barcode=form.barcode.data))
-    else:
-        return redirect(url_for("scan"))
 
 
 # Run
