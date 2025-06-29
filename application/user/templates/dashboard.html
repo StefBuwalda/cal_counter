@@ -33,12 +33,12 @@ Food Nutritional Info
                     <td class="bg-body-tertiary">{{ food.protein_100g }}</td>
                     <td class="bg-body-tertiary">
                         <div class="d-flex gap-1">
+                            <form method="GET" action="{{ url_for('user.edit_food_item', barcode=food.barcode) }}">
+                                <button type="submit" class="btn btn-warning btn-sm">Edit</button>
+                            </form>
                             <form method="POST" action="{{ url_for('user.delete_food_item', barcode=food.barcode) }}"
                                 onsubmit="return confirm('Are you sure you want to delete this item?');">
                                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
-                            <form method="GET" action="{{ url_for('user.edit_food_item', barcode=food.barcode) }}">
-                                <button type="submit" class="btn btn-warning btn-sm">Edit</button>
                             </form>
                         </div>
                     </td>
