@@ -32,6 +32,7 @@ app.register_blueprint(user_bp)
 
 
 def default_return(next_page: Optional[str] = None):
+    return redirect(url_for("user.dashboard"))
     if next_page:
         return redirect(next_page)
     if current_user.is_admin:
@@ -42,7 +43,7 @@ def default_return(next_page: Optional[str] = None):
 @app.route("/")
 @login_required
 def index():
-    return render_template("index.html")
+    return redirect(url_for("login"))
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -130,6 +131,7 @@ def add_food_item():
             )
             db.session.commit()
             print("[DEBUG] New item added")
+            return redirect(url_for("food_item", barcode=form.barcode.data))
     else:
         print("[DEBUG] Invalid form")
     if form.barcode.data:

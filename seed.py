@@ -10,7 +10,7 @@ with app.app_context():
     db.session.add(
         FoodItem(
             name="AH Matcha cookie",
-            owner_id=0,
+            owner_id=1,
             energy=430,
             fats=19,
             carbs=59,
