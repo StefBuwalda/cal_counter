@@ -1,5 +1,5 @@
 from application import db, app
-from models import User, FoodItem
+from models import User, FoodItem, FoodLog
 
 with app.app_context():
     User.query.delete()
@@ -20,5 +20,8 @@ with app.app_context():
             barcode=2278012003502,
         )
     )
+
+    FoodLog.query.delete()
+    db.session.add(FoodLog(1, 1, 200))
 
     db.session.commit()

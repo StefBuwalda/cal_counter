@@ -76,11 +76,13 @@ def add_food_item():
             )
             db.session.commit()
             print("[DEBUG] New item added")
-            return redirect(url_for("food_item", barcode=form.barcode.data))
+            return redirect(
+                url_for("user.food_item", barcode=form.barcode.data)
+            )
     else:
         print("[DEBUG] Invalid form")
     if form.barcode.data:
-        return redirect(url_for("food_item", barcode=form.barcode.data))
+        return redirect(url_for("user.food_item", barcode=form.barcode.data))
     else:
         return redirect(url_for("scan"))
 

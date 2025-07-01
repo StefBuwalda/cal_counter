@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from application import db
 from typing import Optional
 from forms import FoodItemForm
+from datetime import datetime, timezone
 
 
 class User(UserMixin, db.Model):
@@ -12,7 +13,8 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String, nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
 
-    food_items = db.relationship("FoodItem", lazy="dynamic")
+    food_items = db.relationship("FoodItem", lazy="dynamic", backref="user")
+    food_logs = db.relationship("FoodLog", lazy="dynamic", backref="user")
 
     def __init__(
         self, username: str, password: str, is_admin: bool = False
@@ -49,6 +51,8 @@ class FoodItem(db.Model):
     sugar_100 = db.Column(db.Float)
     fat_100 = db.Column(db.Float, nullable=False)
     saturated_fat_100 = db.Column(db.Float)
+
+    food_logs = db.relationship("FoodLog", backref="food_item", lazy="dynamic")
 
     __table_args__ = (
         db.UniqueConstraint("barcode", "owner_id", name="barcode_owner_key"),
@@ -98,3 +102,22 @@ class FoodItem(db.Model):
             "fat_100": self.fat_100,
             "saturated_fat_100": self.saturated_fat_100,
         }
+
+
+class FoodLog(db.Model):
+    __tablename__ = "food_log"
+    id = db.Column(db.Integer, primary_key=True)
+    datetime = db.Column(
+        db.DateTime, default=datetime.now(timezone.utc), nullable=False
+    )
+    food_item_id = db.Column(
+        db.Integer, db.ForeignKey("food_item.id"), nullable=False
+    )
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    amount = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, food_item_id: int, user_id: int, amount: int):
+        super().__init__()
+        self.food_item_id = food_item_id
+        self.user_id = user_id
+        self.amount = amount
