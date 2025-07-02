@@ -32,7 +32,7 @@ def barcode_test():
 def delete_food(id):
     item = FoodItem.query.get(id)
     if item:
-        # if item.owner_id == current_user.id:
-        db.session.delete(item)
-        db.session.commit()
+        if item.owner_id == current_user.id:
+            db.session.delete(item)
+            db.session.commit()
     return redirect(url_for("admin.food_items"))
