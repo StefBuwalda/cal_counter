@@ -25,3 +25,8 @@ class FoodItemForm(FlaskForm):
     fat = FloatField("fat per 100g", validators=[InputRequired()])
     saturated_fat = FloatField("saturated_fat per 100g")
     submit = SubmitField("Add Item")
+
+
+class FoodLogForm(FlaskForm):
+    amount = IntegerField("amount of food (g/ml)")
+    submit = SubmitField("Log Item")

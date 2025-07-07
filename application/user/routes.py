@@ -1,8 +1,8 @@
 from flask import Blueprint, redirect, url_for, render_template, flash
 from flask_login import current_user
 from application import db
-from forms import FoodItemForm
-from models import FoodItem
+from forms import FoodItemForm, FoodLogForm
+from models import FoodItem, FoodLog
 
 user_bp = Blueprint(
     "user",
@@ -113,7 +113,7 @@ def edit_food_item(id: int):
 def food_item(barcode):
     food = FoodItem.query.filter_by(barcode=barcode).first()
     if food:
-        return render_template("food_item.html", item=food)
+        return redirect(url_for("user.log_food", item_id=food.id))
     else:
         return render_template(
             "add_food_item.html",
@@ -149,3 +149,22 @@ def add_food_item_manual():
         db.session.commit()
         return redirect(url_for("user.dashboard"))
     return render_template("add_food_item_manual.html", form=form)
+
+
+@user_bp.route("/log_food/<int:item_id>", methods=["GET", "POST"])
+def log_food(item_id):
+    form = FoodLogForm()
+    if item_id is not None:
+        if db.session.get(FoodItem, item_id):
+            if form.validate_on_submit():
+                assert form.amount.data is not None
+                db.session.add(
+                    FoodLog(
+                        item_id,
+                        current_user.id,
+                        form.amount.data,
+                    )
+                )
+                db.session.commit()
+                return redirect(url_for("user.dashboard"))
+    return render_template("log_food.html", item_id=item_id, form=form)
