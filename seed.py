@@ -22,6 +22,10 @@ with app.app_context():
     )
 
     FoodLog.query.delete()
-    db.session.add(FoodLog(1, 1, 200))
+    db.session.add(FoodLog(1, 1, 200, 0))
+    db.session.add(FoodLog(1, 1, 200, 1))
+    db.session.add(FoodLog(1, 1, 200, 2))
+    db.session.add(FoodLog(1, 1, 200, 3))
+    db.session.add(FoodLog(1, 1, 100, 1))
 
     db.session.commit()

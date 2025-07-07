@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from application import db
 from typing import Optional
 from forms import FoodItemForm
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 
 
 class User(UserMixin, db.Model):
@@ -107,17 +107,31 @@ class FoodItem(db.Model):
 class FoodLog(db.Model):
     __tablename__ = "food_log"
     id = db.Column(db.Integer, primary_key=True)
-    datetime = db.Column(
+    datetime_created = db.Column(
         db.DateTime, default=datetime.now(timezone.utc), nullable=False
+    )
+    date_ = db.Column(
+        db.Date, default=datetime.now(timezone.utc).date, nullable=False
     )
     food_item_id = db.Column(
         db.Integer, db.ForeignKey("food_item.id"), nullable=False
     )
+    part_of_day = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     amount = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, food_item_id: int, user_id: int, amount: int):
+    def __init__(
+        self,
+        food_item_id: int,
+        user_id: int,
+        amount: int,
+        part_of_day: int,
+        date_: Optional[date] = None,
+    ):
         super().__init__()
         self.food_item_id = food_item_id
         self.user_id = user_id
         self.amount = amount
+        if date_ is not None:
+            self.date_ = date_
+        self.part_of_day = part_of_day

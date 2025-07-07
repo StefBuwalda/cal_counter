@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}
+Food Nutritional Info
+{% endblock %}
+
+{% block content %}
+
+<!-- Daily Overview Section -->
+<div class="container">
+
+    <div class="mb-4 p-3 border rounded">
+        <div class="text-center">
+            <h2>Daily Overview ({{date}})</h2>
+            <p>Summary info here...</p>
+        </div>
+
+    </div>
+
+    <div class="p-3 border rounded">
+        <div class="text-center">
+            <h2>Detailed Information</h2>
+            <p>More content here...</p>
+        </div>
+        <div class="p-3 mb-2 border rounded">
+            <h4>Breakfast</h4>
+            {% for log in logs[0] %}
+            <p>{{log.food_item.name}}</p>
+            {% endfor %}
+        </div>
+        <div class="p-3 mb-2 border rounded">
+            <h4>Lunch</h4>
+            {% for log in logs[1] %}
+            <p>{{log.food_item.name}}</p>
+            {% endfor %}
+        </div>
+        <div class="p-3 mb-2 border rounded">
+            <h4>Dinner</h4>
+            {% for log in logs[2] %}
+            <p>{{log.food_item.name}}</p>
+            {% endfor %}
+        </div>
+        <div class="p-3 mb-2 border rounded">
+            <h4>Snacks</h4>
+            {% for log in logs[3] %}
+            <p>{{log.food_item.name}}</p>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+
+<div class="container-fluid my-4">
+    <div class="d-flex justify-content-center">
+        <h1>Overview {{date}}</h1>
+    </div>
+    <div class="d-flex justify-content-center">
+        <div class="mx-2">ENERGY</div>
+        <div class="mx-2">PROTEIN</div>
+        <div class="mx-2">CARBS</div>
+        <div class="mx-2">FATS</div>
+    </div>
+    <div class="m-5"></div>
+    <div class="d-flex justify-content-center">
+        <div> Breakfast </div>
+    </div>
+</div>
+{% endblock%}

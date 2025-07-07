@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}
+Food Nutritional Info
+{% endblock %}
+
+{% block content %}
+
+<div class="container my-4">
+    <div class="d-flex justify-content-center mb-4">
+        <h1>Daily Nutrition Overview</h1>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        <!-- Calories -->
+        <div class="col">
+            <div class="card text-bg-primary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Calories</h5>
+                    <h2>1,850 / 2,000 kcal</h2>
+                    <div class="progress mt-3" style="height: 10px;">
+                        <div class="progress-bar bg-warning" style="width: 92%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Protein -->
+        <div class="col">
+            <div class="card text-bg-success h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Protein</h5>
+                    <h2>120g / 150g</h2>
+                    <div class="progress mt-3" style="height: 10px;">
+                        <div class="progress-bar bg-light" style="width: 80%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carbs -->
+        <div class="col">
+            <div class="card text-bg-info h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Carbs</h5>
+                    <h2>200g / 250g</h2>
+                    <div class="progress mt-3" style="height: 10px;">
+                        <div class="progress-bar bg-dark" style="width: 80%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fat -->
+        <div class="col">
+            <div class="card text-bg-danger h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Fat</h5>
+                    <h2>60g / 70g</h2>
+                    <div class="progress mt-3" style="height: 10px;">
+                        <div class="progress-bar bg-light" style="width: 86%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock%}

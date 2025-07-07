@@ -3,6 +3,7 @@ from flask_login import current_user
 from application import db
 from forms import FoodItemForm, FoodLogForm
 from models import FoodItem, FoodLog
+from datetime import datetime, timezone
 
 user_bp = Blueprint(
     "user",
@@ -163,8 +164,27 @@ def log_food(item_id):
                         item_id,
                         current_user.id,
                         form.amount.data,
+                        part_of_day=0,
                     )
                 )
                 db.session.commit()
                 return redirect(url_for("user.dashboard"))
     return render_template("log_food.html", item_id=item_id, form=form)
+
+
+@user_bp.route("/overview", methods=["GET"])
+def overview():
+    return render_template("overview.html")
+
+
+@user_bp.route("/", methods=["GET"])
+def test():
+    today = datetime.now(timezone.utc).date()
+    logs_today = current_user.food_logs.filter_by(date_=today).all()
+    logs = {0: [], 1: [], 2: [], 3: []}
+    for log in logs_today:
+        logs[log.part_of_day].append(log)
+    print(logs)
+    return render_template(
+        "test.html", date=(today.strftime("%d/%m/%y")), logs=logs
+    )
