@@ -16,7 +16,7 @@ class LoginForm(FlaskForm):
 
 
 class FoodItemForm(FlaskForm):
-    barcode = IntegerField("Barcode", validators=[Optional()])
+    barcode = StringField("Barcode", validators=[Optional()])
     name = StringField("Product Name", validators=[DataRequired()])
     energy = IntegerField("Energy per 100g", validators=[InputRequired()])
     protein = FloatField("protein per 100g", validators=[InputRequired()])

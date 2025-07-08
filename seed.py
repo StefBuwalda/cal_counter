@@ -17,7 +17,7 @@ with app.app_context():
             protein=5.5,
             saturated_fat=10,
             sugar=35,
-            barcode=2278012003502,
+            barcode="2278012003502",
         )
     )
 

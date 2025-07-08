@@ -41,7 +41,7 @@ class Unit(db.Model):
 class FoodItem(db.Model):
     __tablename__ = "food_item"
     id = db.Column(db.Integer, primary_key=True)
-    barcode = db.Column(db.Integer)
+    barcode = db.Column(db.String)
     owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     name = db.Column(db.String(150), nullable=False)
 
@@ -66,10 +66,12 @@ class FoodItem(db.Model):
         protein: float,
         carbs: float,
         fat: float,
-        barcode: Optional[int] = None,
+        barcode: Optional[str] = None,
         sugar: Optional[float] = None,
         saturated_fat: Optional[float] = None,
     ):
+        if barcode and not barcode.isdigit():
+            raise ValueError("Barcode must contain only digits.")
         self.name = name
         self.owner_id = owner_id
         self.energy_100 = energy
