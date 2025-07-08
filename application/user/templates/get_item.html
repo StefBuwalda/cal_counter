@@ -49,8 +49,22 @@
             if (result) {
                 // Result found, this should post the barcode
                 const codeText = result.getText();
-                const baseURL = "{{url_for('user.food_item', barcode='0')}}"
-                window.location.href = baseURL.replace("0", encodeURIComponent(codeText))
+                const baseURL = "{{url_for('user.foodId_from_barcode', barcode='!')}}"
+                fetch(baseURL.replace("!", encodeURIComponent(codeText)))
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not OK');
+                        }
+                        return response.json(); // or response.text(), response.blob(), etc.
+                    })
+                    .then(data => {
+                        const baseURL2 = "{{url_for('user.select_item', item_id='0')}}"
+                        window.location.href = baseURL2.replace("0", encodeURIComponent(data["item_id"]))
+                    })
+                    .catch(error => {
+                        console.error('Fetch error:', error);
+                    });
+
             }
         });
     });
