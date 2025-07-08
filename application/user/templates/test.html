@@ -23,47 +23,51 @@ Food Nutritional Info
             <p>More content here...</p>
         </div>
         <div class="p-3 mb-2 border rounded">
-            <h4>Breakfast</h4>
-            {% for log in logs[0] %}
-            <p>{{log.food_item.name}}</p>
-            {% endfor %}
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Breakfast</h4>
+                <a href="{{url_for('user.select_meal', meal_type=0)}}" class="btn btn-sm btn-primary">Add</a>
+            </div>
+            <div>
+                {% for log in logs[0] %}
+                <p class="p-0 mb-0">{{log.food_item.name}}</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="p-3 mb-2 border rounded">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Lunch</h4>
+                <a href="{{url_for('user.select_meal', meal_type=1)}}" class="btn btn-sm btn-primary">Add</a>
+            </div>
+            <div>
+                {% for log in logs[1] %}
+                <p class="p-0 mb-0">{{log.food_item.name}}</p>
+                {% endfor %}
+            </div>
         </div>
         <div class="p-3 mb-2 border rounded">
-            <h4>Lunch</h4>
-            {% for log in logs[1] %}
-            <p>{{log.food_item.name}}</p>
-            {% endfor %}
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Dinner</h4>
+                <a href="{{url_for('user.select_meal', meal_type=2)}}" class="btn btn-sm btn-primary">Add</a>
+            </div>
+            <div>
+                {% for log in logs[2] %}
+                <p class="p-0 mb-0">{{log.food_item.name}}</p>
+                {% endfor %}
+            </div>
         </div>
         <div class="p-3 mb-2 border rounded">
-            <h4>Dinner</h4>
-            {% for log in logs[2] %}
-            <p>{{log.food_item.name}}</p>
-            {% endfor %}
-        </div>
-        <div class="p-3 mb-2 border rounded">
-            <h4>Snacks</h4>
-            {% for log in logs[3] %}
-            <p>{{log.food_item.name}}</p>
-            {% endfor %}
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Snacks</h4>
+                <a href="{{url_for('user.select_meal', meal_type=3)}}" class="btn btn-sm btn-primary">Add</a>
+            </div>
+            <div>
+                {% for log in logs[3] %}
+                <p class="p-0 mb-0">{{log.food_item.name}}</p>
+                {% endfor %}
+            </div>
         </div>
     </div>
 
-</div>
-
-
-<div class="container-fluid my-4">
-    <div class="d-flex justify-content-center">
-        <h1>Overview {{date}}</h1>
-    </div>
-    <div class="d-flex justify-content-center">
-        <div class="mx-2">ENERGY</div>
-        <div class="mx-2">PROTEIN</div>
-        <div class="mx-2">CARBS</div>
-        <div class="mx-2">FATS</div>
-    </div>
-    <div class="m-5"></div>
-    <div class="d-flex justify-content-center">
-        <div> Breakfast </div>
-    </div>
 </div>
 {% endblock%}

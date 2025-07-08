@@ -1,4 +1,13 @@
-from flask import Blueprint, redirect, url_for, render_template, flash
+from flask import (
+    Blueprint,
+    redirect,
+    url_for,
+    render_template,
+    flash,
+    session,
+    jsonify,
+    abort,
+)
 from flask_login import current_user
 from application import db
 from forms import FoodItemForm, FoodLogForm
@@ -177,14 +186,44 @@ def overview():
     return render_template("overview.html")
 
 
+@user_bp.route("/select_meal/<int:meal_type>", methods=["GET"])
+def select_meal(meal_type: int):
+    assert type(meal_type) is int
+    session["meal_type"] = meal_type
+    return redirect(url_for("user.scan_product"))
+
+
+@user_bp.route("/get_userid", methods=["GET"])
+def scan_product():
+    return render_template("get_item.html")
+
+
+@user_bp.route("/add_meal", methods=["GET"])
+def add_meal():
+    meal_type = session["meal_type"]
+    if meal_type is None:
+        return redirect("/")
+    return render_template("scan.html")
+
+
 @user_bp.route("/", methods=["GET"])
 def test():
     today = datetime.now(timezone.utc).date()
     logs_today = current_user.food_logs.filter_by(date_=today).all()
-    logs = {0: [], 1: [], 2: [], 3: []}
+    logs = [[], [], [], []]
     for log in logs_today:
         logs[log.part_of_day].append(log)
     print(logs)
     return render_template(
         "test.html", date=(today.strftime("%d/%m/%y")), logs=logs
     )
+
+
+@user_bp.route("/foodId_from_barcode/<string:barcode>", methods=["GET"])
+def foodId_from_barcode(barcode: str):
+    if barcode.isdigit():
+        return jsonify({"food_id": barcode})
+    else:
+        return abort(
+            400, description="Invalid barcode: must contain only digits"
+        )

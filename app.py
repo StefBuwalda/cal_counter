@@ -13,7 +13,7 @@ from application.user.routes import user_bp
 from typing import Optional
 
 # Config
-app.config["SECRET_KEY"] = "Iman"
+app.config["SECRET_KEY"] = "Stef123"
 
 login_manager.login_view = "login"  # type: ignore
 
@@ -81,5 +81,9 @@ def scan():
 # Run
 
 if __name__ == "__main__":
-    # app.run(host="0.0.0.0", debug=True, ssl_context=("cert.pem", "key.pem"))
-    app.run(host="0.0.0.0", debug=True)
+    app.run(
+        host="0.0.0.0",
+        port=443,
+        debug=True,
+        ssl_context=("cert.pem", "key.pem"),
+    )
