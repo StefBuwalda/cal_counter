@@ -4,11 +4,14 @@ from flask import (
     url_for,
     render_template,
     session,
+    request,
+    jsonify,
 )
 from flask_login import current_user
 from forms import FoodItemForm, FoodLogForm
 from application import db
 from models import FoodItem, FoodLog
+from sqlalchemy import and_
 
 bp = Blueprint(
     "add_meal",
@@ -37,22 +40,32 @@ def step2():
     return render_template("scan_barcode.html")
 
 
-@bp.route("/step3/<barcode>", methods=["GET"])
-def step3(barcode: str):
+@bp.route("/step3/<string:input>", methods=["GET"])
+def step3(input: str):
+    # check if meal_type cookie is set
     if "meal_type" not in session:
         return redirect("/")
-    assert barcode.isdigit()
-    item = current_user.food_items.filter_by(barcode=barcode).first()
-    if item is None:
-        # Does not exist, add item
-        return redirect(url_for("add_meal.step3_alt1", barcode=barcode))
+
+    # Check if input is a barcode
+    if input.isdigit():
+        item = current_user.food_items.filter_by(barcode=input).first()
+        if item is None:
+            # Does not exist, add item
+            return redirect(url_for("add_meal.step3_alt1", input=input))
     else:
-        session["item_id"] = item.id
-        return redirect(url_for("add_meal.step4"))
+        # input is not a number, must be the name of the item.
+        item = current_user.food_items.filter_by(name=input).first()
+        if item is None:
+            # Does not exist, add manually.
+            return redirect(url_for("add_meal.step3_alt1", input=input))
+
+    # Track item to add and continue to next step
+    session["item_id"] = item.id
+    return redirect(url_for("add_meal.step4"))
 
 
-@bp.route("/step3_alt1/<barcode>", methods=["GET", "POST"])
-def step3_alt1(barcode: str):
+@bp.route("/step3_alt1/<string:input>", methods=["GET", "POST"])
+def step3_alt1(input: str):
     form = FoodItemForm()
     if form.validate_on_submit():
         print("[DEBUG] Valid form")
@@ -89,8 +102,10 @@ def step3_alt1(barcode: str):
             print("[DEBUG] New item added")
         return redirect(url_for("add_meal.step3", barcode=form.barcode.data))
     print("[DEBUG] Invalid form")
-    if barcode.isdigit():
-        form.barcode.data = barcode
+    if input.isdigit():
+        form.barcode.data = input
+    else:
+        form.name.data = input
     return render_template("add_item.html", form=form)
 
 
@@ -129,3 +144,18 @@ def step4():
         case _:
             tod = "Unknown"
     return render_template("step4.html", tod=tod, item=item, form=form)
+
+
+@bp.route("/query", methods=["GET"])
+def query():
+    q = request.args.get("q", "").strip().lower()
+    if not q:
+        return jsonify([])
+
+    words = q.split()
+    filters = [
+        FoodItem.name.ilike(f"%{word}%") for word in words  # type: ignore
+    ]
+
+    results = current_user.food_items.filter(and_(*filters)).all()
+    return jsonify([item.name for item in results])
