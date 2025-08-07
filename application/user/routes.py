@@ -112,4 +112,6 @@ def remove_log(id: int):
     # Delete log
     db.session.delete(log)
     db.session.commit()
+    if "offset" in session:
+        return redirect(url_for("user.daily_log", offset=session["offset"]))
     return redirect(url_for("user.daily_log"))
