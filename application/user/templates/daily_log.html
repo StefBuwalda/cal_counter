@@ -9,8 +9,17 @@ Food Nutritional Info
 <!-- Daily Overview Section -->
 <div class="container">
 
-    <div class="mb-4 p-3 border rounded">
-        <div class="text-center">
+    <div class="mb-4 p-3 border rounded d-flex align-items-center justify-content-between">
+        <!-- Previous Day Button -->
+        <form method="get" action="{{url_for('user.daily_log', offset=offset - 1)}}" class="m-0">
+            <button type="submit" class="btn btn-outline-primary d-flex align-items-center justify-content-center"
+                style="width: 40px; height: 40px;">
+                &laquo;
+            </button>
+        </form>
+
+        <!-- Main Content -->
+        <div class="flex-grow-1 text-center">
             <h2>Daily Overview ({{date}})</h2>
 
             <!-- Row 1 -->
@@ -33,7 +42,17 @@ Food Nutritional Info
                 </div>
             </div>
         </div>
+
+        <!-- Next Day Button -->
+        <form method="get" action="{{url_for('user.daily_log', offset=offset + 1)}}" class="m-0">
+            <button type="submit" class="btn btn-outline-primary d-flex align-items-center justify-content-center"
+                style="width: 40px; height: 40px;">
+                &raquo;
+            </button>
+        </form>
     </div>
+
+
 
 
     <div class="p-3 border rounded">

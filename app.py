@@ -34,7 +34,7 @@ app.register_blueprint(add_meal_bp)
 
 
 def default_return(next_page: Optional[str] = None):
-    return redirect(url_for("user.dashboard"))
+    return redirect(url_for("user.daily_log"))
     if next_page:
         return redirect(next_page)
     if current_user.is_admin:

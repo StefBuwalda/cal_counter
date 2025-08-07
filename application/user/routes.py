@@ -10,7 +10,7 @@ from flask_login import current_user
 from application import db
 from forms import FoodItemForm
 from models import FoodItem, FoodLog
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 user_bp = Blueprint(
     "user",
@@ -68,9 +68,15 @@ def edit_food_item(id: int):
 
 
 @user_bp.route("/", methods=["GET"])
-def daily_log():
+@user_bp.route("/<offset>", methods=["GET"])
+def daily_log(offset: int = 0):
+    try:
+        offset = int(offset)
+    except ValueError:
+        abort(400)  # or handle invalid input
     today = datetime.now(timezone.utc).date()
-    logs_today = current_user.food_logs.filter_by(date_=today).all()
+    day = today + timedelta(days=offset)
+    logs_today = current_user.food_logs.filter_by(date_=day).all()
     logs = [[], [], [], []]
     calories: float = 0
     protein: float = 0
@@ -84,12 +90,13 @@ def daily_log():
         fat += log.amount * log.food_item.fat_100 / 100
     return render_template(
         "daily_log.html",
-        date=(today.strftime("%d/%m/%y")),
+        date=(day.strftime("%d/%m/%y")),
         logs=logs,
         calories=calories,
         protein=protein,
         carbs=carbs,
         fat=fat,
+        offset=offset,
     )
 
 
