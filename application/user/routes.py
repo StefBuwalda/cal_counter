@@ -5,6 +5,7 @@ from flask import (
     render_template,
     flash,
     abort,
+    session,
 )
 from flask_login import current_user
 from application import db
@@ -76,6 +77,7 @@ def daily_log(offset: int = 0):
         abort(400)  # or handle invalid input
     today = datetime.now(timezone.utc).date()
     day = today + timedelta(days=offset)
+    session["offset"] = offset
     logs_today = current_user.food_logs.filter_by(date_=day).all()
     logs = [[], [], [], []]
     calories: float = 0

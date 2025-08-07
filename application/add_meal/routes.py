@@ -6,12 +6,14 @@ from flask import (
     session,
     request,
     jsonify,
+    abort,
 )
 from flask_login import current_user
 from forms import FoodItemForm, FoodLogForm
 from application import db
 from models import FoodItem, FoodLog
 from sqlalchemy import and_
+from datetime import datetime, timedelta, timezone
 
 bp = Blueprint(
     "add_meal",
@@ -116,7 +118,13 @@ def step4():
     form = FoodLogForm()
     item = db.session.get(FoodItem, session["item_id"])
 
-    assert item
+    offset = session["offset"]
+    if offset is None or item is None:
+        abort(404)
+
+    today = datetime.now(timezone.utc).date()
+    day = today + timedelta(days=offset)
+
     if form.validate_on_submit():
         assert form.amount.data
         db.session.add(
@@ -125,12 +133,13 @@ def step4():
                 user_id=current_user.id,
                 amount=form.amount.data,
                 part_of_day=session["meal_type"],
+                date_=day,
             )
         )
         db.session.commit()
         session.pop("meal_type")
         session.pop("item_id")
-        return redirect("/")
+        return redirect(url_for("user.daily_log", offset=offset))
 
     match session["meal_type"]:
         case 0:
