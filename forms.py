@@ -16,17 +16,19 @@ class LoginForm(FlaskForm):
 
 
 class FoodItemForm(FlaskForm):
-    barcode = StringField("Barcode", validators=[Optional()])
+    barcode = StringField("Barcode", validators=[InputRequired()])
     name = StringField("Product Name", validators=[DataRequired()])
     energy = IntegerField("Energy per 100g", validators=[InputRequired()])
     protein = FloatField("protein per 100g", validators=[InputRequired()])
     carbs = FloatField("carbs per 100g", validators=[InputRequired()])
     sugar = FloatField("sugar per 100g", validators=[Optional()])
     fat = FloatField("fat per 100g", validators=[InputRequired()])
-    saturated_fat = FloatField("saturated_fat per 100g")
+    saturated_fat = FloatField(
+        "saturated_fat per 100g", validators=[Optional()]
+    )
     submit = SubmitField("Add Item")
 
 
 class FoodLogForm(FlaskForm):
-    amount = IntegerField("amount of food (g/ml)")
+    amount = FloatField("amount of food (g/ml)", validators=[DataRequired()])
     submit = SubmitField("Log Item")

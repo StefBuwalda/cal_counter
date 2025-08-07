@@ -120,13 +120,13 @@ class FoodLog(db.Model):
     )
     part_of_day = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    amount = db.Column(db.Integer, nullable=False)
+    amount = db.Column(db.Float, nullable=False)
 
     def __init__(
         self,
         food_item_id: int,
         user_id: int,
-        amount: int,
+        amount: float,
         part_of_day: int,
         date_: Optional[date] = None,
     ):

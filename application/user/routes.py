@@ -47,21 +47,10 @@ def delete_food_item(id: int):
     return redirect(url_for("user.dashboard"))
 
 
-fields = [
-    "barcode",
-    "name",
-    "energy",
-    "protein",
-    "carbs",
-    "sugar",
-    "fat",
-    "saturated_fat",
-]
-
-
 @user_bp.route("/add_food_item/<string:barcode>", methods=["GET", "POST"])
 def add_food_item(barcode):
     form = FoodItemForm(barcode=barcode)
+    print(form)
 
     if form.validate_on_submit():
         print("[DEBUG] Valid form")
@@ -92,6 +81,7 @@ def add_food_item(barcode):
     else:
         print("[DEBUG] Invalid form")
     if form.barcode.data:
+        print("1")
         return render_template("add_food_item.html", form=form)
     else:
         return redirect("/")
@@ -217,7 +207,7 @@ def add_meal():
 
 
 @user_bp.route("/", methods=["GET"])
-def test():
+def daily_log():
     today = datetime.now(timezone.utc).date()
     logs_today = current_user.food_logs.filter_by(date_=today).all()
     logs = [[], [], [], []]
@@ -225,7 +215,7 @@ def test():
         logs[log.part_of_day].append(log)
     print(logs)
     return render_template(
-        "test.html", date=(today.strftime("%d/%m/%y")), logs=logs
+        "daily_log.html", date=(today.strftime("%d/%m/%y")), logs=logs
     )
 
 
