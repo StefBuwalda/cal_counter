@@ -4,11 +4,12 @@ from flask import (
     url_for,
     render_template,
     flash,
+    abort,
 )
 from flask_login import current_user
 from application import db
 from forms import FoodItemForm
-from models import FoodItem
+from models import FoodItem, FoodLog
 from datetime import datetime, timezone
 
 user_bp = Blueprint(
@@ -78,7 +79,19 @@ def daily_log():
     logs = [[], [], [], []]
     for log in logs_today:
         logs[log.part_of_day].append(log)
-    print(logs)
     return render_template(
         "daily_log.html", date=(today.strftime("%d/%m/%y")), logs=logs
     )
+
+
+@user_bp.route("/remove_log/<int:id>", methods=["POST"])
+def remove_log(id: int):
+    log = db.session.get(FoodLog, id)
+    # Check if log exists and if user owns log
+    if log is None or log.user_id != current_user.id:
+        abort(404)
+
+    # Delete log
+    db.session.delete(log)
+    db.session.commit()
+    return redirect(url_for("user.daily_log"))

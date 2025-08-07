@@ -19,55 +19,154 @@ Food Nutritional Info
 
     <div class="p-3 border rounded">
         <div class="text-center">
-            <h2>Detailed Information</h2>
-            <p>More content here...</p>
+            <h2>Eaten today</h2>
         </div>
         <div class="p-3 mb-2 border rounded">
-            <div class="d-flex justify-content-between align-items-center">
-                <h4 class="mb-0">Breakfast</h4>
-                <a href="{{url_for('add_meal.step1', meal_type=0)}}" class="btn btn-sm btn-primary">Add</a>
+            <!-- Header row (centered vertically for consistency) -->
+            <div class="row align-items-center mb-2">
+                <div class="col">
+                    <h4 class="mb-0">Breakfast</h4>
+                </div>
+                <div class="col-auto text-end" style="min-width: 80px;">
+                    <h4 class="mb-0">Amount</h4>
+                </div>
+                <div class="col-auto text-end" style="min-width: 80px;">
+                    <a href="{{ url_for('add_meal.step1', meal_type=0) }}"
+                        class="btn btn-sm btn-primary px-3 py-1">Add</a>
+                </div>
             </div>
+
+            <!-- Data rows -->
             <div>
                 {% for log in logs[0] %}
-                <p class="p-0 mb-0">{{log.food_item.name}} - {{"{:g}".format(log.amount)}}</p>
+                <div class="row mb-2">
+                    <div class="col text-wrap">
+                        {{ log.food_item.name }}
+                    </div>
+                    <div class="col-auto text-end align-self-start" style="min-width: 80px;">
+                        {{ "{:g}".format(log.amount) }}
+                    </div>
+                    <div class="col-auto text-end align-self-start" style="min-width: 80px;">
+                        <form method="POST" action="{{url_for('user.remove_log', id=log.id)}}" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-danger px-3 py-1"
+                                title="Delete">&times;</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+
+
+
+        <div class="p-3 mb-2 border rounded">
+            <!-- Header row (centered vertically for consistency) -->
+            <div class="row align-items-center mb-2">
+                <div class="col">
+                    <h4 class="mb-0">Lunch</h4>
+                </div>
+                <div class="col-auto text-end" style="min-width: 80px;">
+                    <h4 class="mb-0">Amount</h4>
+                </div>
+                <div class="col-auto text-end" style="min-width: 80px;">
+                    <a href="{{ url_for('add_meal.step1', meal_type=1) }}"
+                        class="btn btn-sm btn-primary px-3 py-1">Add</a>
+                </div>
+            </div>
+
+            <!-- Data rows -->
+            <div>
+                {% for log in logs[1] %}
+                <div class="row mb-2">
+                    <div class="col text-wrap">
+                        {{ log.food_item.name }}
+                    </div>
+                    <div class="col-auto text-end align-self-start" style="min-width: 80px;">
+                        {{ "{:g}".format(log.amount) }}
+                    </div>
+                    <div class="col-auto text-end align-self-start" style="min-width: 80px;">
+                        <form method="POST" action="{{url_for('user.remove_log', id=log.id)}}" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-danger px-3 py-1"
+                                title="Delete">&times;</button>
+                        </form>
+                    </div>
+                </div>
                 {% endfor %}
             </div>
         </div>
 
         <div class="p-3 mb-2 border rounded">
-            <div class="d-flex justify-content-between align-items-center">
-                <h4 class="mb-0">Lunch</h4>
-                <a href="{{url_for('add_meal.step1', meal_type=1)}}" class="btn btn-sm btn-primary">Add</a>
+            <!-- Header row (centered vertically for consistency) -->
+            <div class="row align-items-center mb-2">
+                <div class="col">
+                    <h4 class="mb-0">Dinner</h4>
+                </div>
+                <div class="col-auto text-end" style="min-width: 80px;">
+                    <h4 class="mb-0">Amount</h4>
+                </div>
+                <div class="col-auto text-end" style="min-width: 80px;">
+                    <a href="{{ url_for('add_meal.step1', meal_type=2) }}"
+                        class="btn btn-sm btn-primary px-3 py-1">Add</a>
+                </div>
             </div>
-            <div>
-                {% for log in logs[1] %}
-                <p class="p-0 mb-0">{{log.food_item.name}} - {{"{:g}".format(log.amount)}}</p>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="p-3 mb-2 border rounded">
-            <div class="d-flex justify-content-between align-items-center">
-                <h4 class="mb-0">Dinner</h4>
-                <a href="{{url_for('add_meal.step1', meal_type=2)}}" class="btn btn-sm btn-primary">Add</a>
-            </div>
+
+            <!-- Data rows -->
             <div>
                 {% for log in logs[2] %}
-                <p class="p-0 mb-0">{{log.food_item.name}} - {{"{:g}".format(log.amount)}}</p>
+                <div class="row mb-2">
+                    <div class="col text-wrap">
+                        {{ log.food_item.name }}
+                    </div>
+                    <div class="col-auto text-end align-self-start" style="min-width: 80px;">
+                        {{ "{:g}".format(log.amount) }}
+                    </div>
+                    <div class="col-auto text-end align-self-start" style="min-width: 80px;">
+                        <form method="POST" action="{{url_for('user.remove_log', id=log.id)}}" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-danger px-3 py-1"
+                                title="Delete">&times;</button>
+                        </form>
+                    </div>
+                </div>
                 {% endfor %}
             </div>
         </div>
+
         <div class="p-3 mb-2 border rounded">
-            <div class="d-flex justify-content-between align-items-center">
-                <h4 class="mb-0">Snacks</h4>
-                <a href="{{url_for('add_meal.step1', meal_type=3)}}" class="btn btn-sm btn-primary">Add</a>
+            <!-- Header row (centered vertically for consistency) -->
+            <div class="row align-items-center mb-2">
+                <div class="col">
+                    <h4 class="mb-0">Snacks</h4>
+                </div>
+                <div class="col-auto text-end" style="min-width: 80px;">
+                    <h4 class="mb-0">Amount</h4>
+                </div>
+                <div class="col-auto text-end" style="min-width: 80px;">
+                    <a href="{{ url_for('add_meal.step1', meal_type=3) }}"
+                        class="btn btn-sm btn-primary px-3 py-1">Add</a>
+                </div>
             </div>
+
+            <!-- Data rows -->
             <div>
                 {% for log in logs[3] %}
-                <p class="p-0 mb-0">{{log.food_item.name}} - {{"{:g}".format(log.amount)}}</p>
+                <div class="row mb-2">
+                    <div class="col text-wrap">
+                        {{ log.food_item.name }}
+                    </div>
+                    <div class="col-auto text-end align-self-start" style="min-width: 80px;">
+                        {{ "{:g}".format(log.amount) }}
+                    </div>
+                    <div class="col-auto text-end align-self-start" style="min-width: 80px;">
+                        <form method="POST" action="{{url_for('user.remove_log', id=log.id)}}" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-danger px-3 py-1"
+                                title="Delete">&times;</button>
+                        </form>
+                    </div>
+                </div>
                 {% endfor %}
             </div>
         </div>
     </div>
 
-</div>
-{% endblock%}
+    {% endblock%}
