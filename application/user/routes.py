@@ -67,11 +67,6 @@ def edit_food_item(id: int):
     return redirect(url_for("user.dashboard"))
 
 
-@user_bp.route("/overview", methods=["GET"])
-def overview():
-    return render_template("overview.html")
-
-
 @user_bp.route("/", methods=["GET"])
 def daily_log():
     today = datetime.now(timezone.utc).date()
