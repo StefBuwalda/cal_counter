@@ -29,7 +29,7 @@ Food Nutritional Info
             </div>
             <div>
                 {% for log in logs[0] %}
-                <p class="p-0 mb-0">{{log.food_item.name}} - {{log.amount}}</p>
+                <p class="p-0 mb-0">{{log.food_item.name}} - {{"{:g}".format(log.amount)}}</p>
                 {% endfor %}
             </div>
         </div>
@@ -41,7 +41,7 @@ Food Nutritional Info
             </div>
             <div>
                 {% for log in logs[1] %}
-                <p class="p-0 mb-0">{{log.food_item.name}} - {{log.amount}}</p>
+                <p class="p-0 mb-0">{{log.food_item.name}} - {{"{:g}".format(log.amount)}}</p>
                 {% endfor %}
             </div>
         </div>
@@ -52,7 +52,7 @@ Food Nutritional Info
             </div>
             <div>
                 {% for log in logs[2] %}
-                <p class="p-0 mb-0">{{log.food_item.name}} - {{log.amount}}</p>
+                <p class="p-0 mb-0">{{log.food_item.name}} - {{"{:g}".format(log.amount)}}</p>
                 {% endfor %}
             </div>
         </div>
@@ -63,7 +63,7 @@ Food Nutritional Info
             </div>
             <div>
                 {% for log in logs[3] %}
-                <p class="p-0 mb-0">{{log.food_item.name}} - {{log.amount}}</p>
+                <p class="p-0 mb-0">{{log.food_item.name}} - {{"{:g}".format(log.amount)}}</p>
                 {% endfor %}
             </div>
         </div>
