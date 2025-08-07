@@ -77,10 +77,24 @@ def daily_log():
     today = datetime.now(timezone.utc).date()
     logs_today = current_user.food_logs.filter_by(date_=today).all()
     logs = [[], [], [], []]
+    calories: float = 0
+    protein: float = 0
+    carbs: float = 0
+    fat: float = 0
     for log in logs_today:
         logs[log.part_of_day].append(log)
+        calories += log.amount * log.food_item.energy_100 / 100
+        protein += log.amount * log.food_item.protein_100 / 100
+        carbs += log.amount * log.food_item.carbs_100 / 100
+        fat += log.amount * log.food_item.fat_100 / 100
     return render_template(
-        "daily_log.html", date=(today.strftime("%d/%m/%y")), logs=logs
+        "daily_log.html",
+        date=(today.strftime("%d/%m/%y")),
+        logs=logs,
+        calories=calories,
+        protein=protein,
+        carbs=carbs,
+        fat=fat,
     )
 
 

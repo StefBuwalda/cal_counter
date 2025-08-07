@@ -12,10 +12,29 @@ Food Nutritional Info
     <div class="mb-4 p-3 border rounded">
         <div class="text-center">
             <h2>Daily Overview ({{date}})</h2>
-            <p>Summary info here...</p>
-        </div>
 
+            <!-- Row 1 -->
+            <div class="row justify-content-center text-center mb-2">
+                <div class="col-auto">
+                    <strong>Calories:</strong> {{ '%.0f' % calories }} kcal
+                </div>
+                <div class="col-auto">
+                    <strong>Protein:</strong> {{ '%.1f' % protein }} g
+                </div>
+            </div>
+
+            <!-- Row 2 -->
+            <div class="row justify-content-center text-center">
+                <div class="col-auto">
+                    <strong>Carbs:</strong> {{ '%.1f' % carbs }} g
+                </div>
+                <div class="col-auto">
+                    <strong>Fat:</strong> {{ '%.1f' % fat }} g
+                </div>
+            </div>
+        </div>
     </div>
+
 
     <div class="p-3 border rounded">
         <div class="text-center">
