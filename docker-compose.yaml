@@ -4,6 +4,6 @@ services:
     build: .
     container_name: my_python_sqlite_app
     ports:
-      - "5000:5000"  # change if needed
+      - "80:5000"  # change if needed
     volumes:
       - ./data:/app/data  # maps host ./data to container /app/data
