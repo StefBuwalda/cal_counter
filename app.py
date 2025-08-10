@@ -31,8 +31,6 @@ app.register_blueprint(add_meal_bp)
 
 
 # Routes
-
-
 def default_return(next_page: Optional[str] = None):
     return redirect(url_for("user.daily_log"))
     if next_page:
@@ -81,8 +79,13 @@ def scan():
 
 
 # Run
-
 if __name__ == "__main__":
+    # If there are no users, create admin account
+    if User.query.count() == 0:
+        admin = User(username="admin", password="admin", is_admin=True)
+        db.session.add(admin)
+        db.session.commit()
+
     app.run(
         host="0.0.0.0",
         port=80,
