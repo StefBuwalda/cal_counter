@@ -28,7 +28,7 @@ bp = Blueprint(
 @bp.before_request
 def login_required():
     if not current_user.is_authenticated:
-        return redirect(url_for("login"))
+        return redirect(url_for("auth.login"))
 
 
 @bp.route("/select_meal/<int:meal_type>", methods=["GET"])

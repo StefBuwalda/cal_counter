@@ -11,7 +11,7 @@ from wtforms.validators import DataRequired, InputRequired, Optional
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])
-    submit = SubmitField("Login")
+    submit = SubmitField("auth.login")
 
 
 class FoodItemForm(FlaskForm):
