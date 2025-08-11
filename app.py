@@ -1,4 +1,10 @@
-from flask import render_template, redirect, url_for, request
+from flask import (
+    render_template,
+    redirect,
+    url_for,
+    request,
+    send_from_directory,
+)
 from flask_login import (
     login_required,
     logout_user,
@@ -44,6 +50,11 @@ def default_return(next_page: Optional[str] = None):
 @login_required
 def index():
     return redirect(url_for("login"))
+
+
+@app.route("/favicon.ico")
+def favicon():
+    return send_from_directory("static", "favicon.ico")
 
 
 @app.route("/login", methods=["GET", "POST"])
