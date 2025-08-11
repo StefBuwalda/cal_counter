@@ -3,7 +3,6 @@ from wtforms import (
     StringField,
     PasswordField,
     SubmitField,
-    IntegerField,
     FloatField,
 )
 from wtforms.validators import DataRequired, InputRequired, Optional
@@ -18,7 +17,7 @@ class LoginForm(FlaskForm):
 class FoodItemForm(FlaskForm):
     barcode = StringField("Barcode", validators=[Optional()])
     name = StringField("Product Name", validators=[DataRequired()])
-    energy = IntegerField(
+    energy = FloatField(
         "Energy per 100g",
         validators=[InputRequired()],
         render_kw={"inputmode": "decimal"},

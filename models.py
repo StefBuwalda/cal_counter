@@ -45,7 +45,7 @@ class FoodItem(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     name = db.Column(db.String(150), nullable=False)
 
-    energy_100 = db.Column(db.Integer, nullable=False)
+    energy_100 = db.Column(db.Float, nullable=False)
     protein_100 = db.Column(db.Float, nullable=False)
     carbs_100 = db.Column(db.Float, nullable=False)
     sugar_100 = db.Column(db.Float)
@@ -68,7 +68,7 @@ class FoodItem(db.Model):
         self,
         name: str,
         owner_id: int,
-        energy: int,
+        energy: float,
         protein: float,
         carbs: float,
         fat: float,
