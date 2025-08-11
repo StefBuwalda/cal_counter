@@ -18,13 +18,35 @@ class LoginForm(FlaskForm):
 class FoodItemForm(FlaskForm):
     barcode = StringField("Barcode", validators=[Optional()])
     name = StringField("Product Name", validators=[DataRequired()])
-    energy = IntegerField("Energy per 100g", validators=[InputRequired()])
-    protein = FloatField("protein per 100g", validators=[InputRequired()])
-    carbs = FloatField("carbs per 100g", validators=[InputRequired()])
-    sugar = FloatField("sugar per 100g", validators=[Optional()])
-    fat = FloatField("fat per 100g", validators=[InputRequired()])
+    energy = IntegerField(
+        "Energy per 100g",
+        validators=[InputRequired()],
+        render_kw={"inputmode": "decimal"},
+    )
+    protein = FloatField(
+        "protein per 100g",
+        validators=[InputRequired()],
+        render_kw={"inputmode": "decimal"},
+    )
+    carbs = FloatField(
+        "carbs per 100g",
+        validators=[InputRequired()],
+        render_kw={"inputmode": "decimal"},
+    )
+    sugar = FloatField(
+        "sugar per 100g",
+        validators=[Optional()],
+        render_kw={"inputmode": "decimal"},
+    )
+    fat = FloatField(
+        "fat per 100g",
+        validators=[InputRequired()],
+        render_kw={"inputmode": "decimal"},
+    )
     saturated_fat = FloatField(
-        "saturated_fat per 100g", validators=[Optional()]
+        "saturated_fat per 100g",
+        validators=[Optional()],
+        render_kw={"inputmode": "decimal"},
     )
     submit = SubmitField("Add Item")
 
