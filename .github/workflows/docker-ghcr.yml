@@ -24,10 +24,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker image
-        run: |
-          docker build -t ghcr.io/stefbuwalda/cal_counter:latest .
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.11.1
 
-      - name: Push Docker image
-        run: |
-          docker push ghcr.io/stefbuwalda/cal_counter:latest
+      - name: Build and push ARM64 image
+        uses: docker/build-push-action@v6.18.0
+        with:
+          context: .
+          push: true
+          platforms: linux/arm64
+          tags: ghcr.io/stefbuwalda/cal_counter:arm64,ghcr.io/stefbuwalda/cal_counter:latest
