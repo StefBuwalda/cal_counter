@@ -1,0 +1,36 @@
+name: Auto Minor Bump on Main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  bump_minor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5.0.0
+        with:
+          fetch-depth: 0     # fetch all history (needed to get all tags)
+
+
+      - name: Get latest tag
+        id: get_tag
+        run: |
+          echo "LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo v0.0.0)" >> $GITHUB_ENV
+
+      - name: Bump minor version
+        id: bump_version
+        run: |
+          echo "Latest tag: $LATEST_TAG"
+          IFS='.' read -r major minor patch <<<"${LATEST_TAG//v/}"
+          new_minor=$((minor + 1))
+          NEW_TAG="v${major}.${new_minor}.0"
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+
+      - name: Create new tag and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag $NEW_TAG
+          git push origin $NEW_TAG
