@@ -55,13 +55,6 @@ def favicon():
     return send_from_directory("static", "favicon.ico")
 
 
-@app.route("/logout")
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for("index"))
-
-
 # Run
 if __name__ == "__main__":
     # If there are no users, create admin account

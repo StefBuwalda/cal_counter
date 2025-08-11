@@ -1,5 +1,5 @@
 from flask import Blueprint, request, render_template, redirect, url_for
-from flask_login import current_user, login_user
+from flask_login import current_user, login_user, logout_user
 from forms import LoginForm, ChangePasswordForm
 from models import User
 from application.utils import default_return
@@ -48,3 +48,12 @@ def change_password():
             db.session.commit()
             return default_return()
     return render_template("change_password.html", form=form)
+
+
+@bp.route("/logout")
+def logout():
+    if not current_user.is_authenticated:
+        return redirect(url_for("auth.login"))
+
+    logout_user()
+    return redirect(url_for("index"))
