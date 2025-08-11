@@ -72,12 +72,6 @@ def logout():
     return redirect(url_for("index"))
 
 
-@app.route("/scan")
-@login_required
-def scan():
-    return render_template("scan.html")
-
-
 # Run
 if __name__ == "__main__":
     # If there are no users, create admin account
