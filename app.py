@@ -81,10 +81,11 @@ def scan():
 # Run
 if __name__ == "__main__":
     # If there are no users, create admin account
-    if User.query.count() == 0:
-        admin = User(username="admin", password="admin", is_admin=True)
-        db.session.add(admin)
-        db.session.commit()
+    with app.app_context():
+        if User.query.count() == 0:
+            admin = User(username="admin", password="admin", is_admin=True)
+            db.session.add(admin)
+            db.session.commit()
 
     app.run(
         host="0.0.0.0",
