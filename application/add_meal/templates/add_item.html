@@ -20,8 +20,13 @@
     </div>
 
     <div class="mb-3">
-        {{ form.protein.label(class="form-label") }}
-        {{ form.protein(class="form-control") }}
+        {{ form.fat.label(class="form-label") }}
+        {{ form.fat(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.saturated_fat.label(class="form-label") }}
+        {{ form.saturated_fat(class="form-control") }}
     </div>
 
     <div class="mb-3">
@@ -35,13 +40,8 @@
     </div>
 
     <div class="mb-3">
-        {{ form.fat.label(class="form-label") }}
-        {{ form.fat(class="form-control") }}
-    </div>
-
-    <div class="mb-3">
-        {{ form.saturated_fat.label(class="form-label") }}
-        {{ form.saturated_fat(class="form-control") }}
+        {{ form.protein.label(class="form-label") }}
+        {{ form.protein(class="form-control") }}
     </div>
 
     {{ form.submit(class="btn btn-primary") }}
