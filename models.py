@@ -52,10 +52,16 @@ class FoodItem(db.Model):
     fat_100 = db.Column(db.Float, nullable=False)
     saturated_fat_100 = db.Column(db.Float)
 
-    food_logs = db.relationship("FoodLog", backref="food_item", lazy="dynamic")
+    food_logs = db.relationship(
+        "FoodLog",
+        backref="food_item",
+        lazy="dynamic",
+        cascade="all, delete-orphan",
+    )
 
     __table_args__ = (
         db.UniqueConstraint("barcode", "owner_id", name="barcode_owner_key"),
+        db.UniqueConstraint("name", "owner_id", name="name_owner_key"),
     )
 
     def __init__(

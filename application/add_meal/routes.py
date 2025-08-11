@@ -12,8 +12,10 @@ from flask_login import current_user
 from forms import FoodItemForm, FoodLogForm
 from application import db
 from models import FoodItem, FoodLog
-from sqlalchemy import and_
+from sqlalchemy import and_, or_
 from datetime import datetime, timedelta, timezone
+from sqlalchemy.sql.elements import BinaryExpression
+from typing import cast
 
 bp = Blueprint(
     "add_meal",
@@ -51,64 +53,78 @@ def step3(input: str):
     # Check if input is a barcode
     if input.isdigit():
         item = current_user.food_items.filter_by(barcode=input).first()
-        if item is None:
-            # Does not exist, add item
-            return redirect(url_for("add_meal.step3_alt1", input=input))
+
     else:
-        # input is not a number, must be the name of the item.
         item = current_user.food_items.filter_by(name=input).first()
-        if item is None:
-            # Does not exist, add manually.
-            return redirect(url_for("add_meal.step3_alt1", input=input))
+
+    if item is None:
+        # Does not exist, add item
+        return redirect(url_for("add_meal.step3_alt1", input=input))
 
     # Track item to add and continue to next step
     session["item_id"] = item.id
     return redirect(url_for("add_meal.step4"))
 
 
-@bp.route("/step3_alt1/<string:input>", methods=["GET", "POST"])
+@bp.route("/step3_alt1/<string:input>", methods=["GET"])
 def step3_alt1(input: str):
     form = FoodItemForm()
-    if form.validate_on_submit():
-        print("[DEBUG] Valid form")
-        if (
-            current_user.food_items.filter_by(
-                barcode=form.barcode.data
-            ).first()
-            is None
-        ):
-            assert form.name.data is not None
-            assert form.energy.data is not None
-            assert form.protein.data is not None
-            assert form.carbs.data is not None
-            assert form.fat.data is not None
-            assert form.barcode.data is not None
-            db.session.add(
-                FoodItem(
-                    name=form.name.data,
-                    owner_id=current_user.id,
-                    energy=form.energy.data,
-                    protein=form.protein.data,
-                    carbs=form.carbs.data,
-                    fat=form.fat.data,
-                    barcode=(
-                        form.barcode.data
-                        if form.barcode.data.isdigit()
-                        else None
-                    ),
-                    saturated_fat=form.saturated_fat.data,
-                    sugar=form.sugar.data,
-                )
-            )
-            db.session.commit()
-            print("[DEBUG] New item added")
-        return redirect(url_for("add_meal.step3", input=form.barcode.data))
-    print("[DEBUG] Invalid form")
+
     if input.isdigit():
         form.barcode.data = input
     else:
         form.name.data = input
     return render_template("add_item.html", form=form)
+
+
+@bp.route("/step3_alt1/<string:input>", methods=["POST"])
+def step3_alt1_post(input: str):
+    form = FoodItemForm()
+
+    if form.validate_on_submit():
+        # Form has valid input
+        barcode = form.barcode.data
+        name = form.name.data
+        assert name
+        assert form.energy.data is not None
+        assert form.protein.data is not None
+        assert form.carbs.data is not None
+        assert form.fat.data is not None
+
+        # Check if name or barcode already exists
+        name_filter = cast(BinaryExpression, FoodItem.name == name)
+        barcode_filter = cast(BinaryExpression, FoodItem.barcode == barcode)
+        filter_exp = or_(name_filter, barcode_filter)
+        item = current_user.food_items.filter(filter_exp).first()
+
+        if item is None:
+            # Item does not exist, add to DB
+            barcode = (
+                barcode if barcode else None
+            )  # Turn empty strings into None
+            db.session.add(
+                FoodItem(
+                    name=name,
+                    owner_id=current_user.id,
+                    energy=form.energy.data,
+                    protein=form.protein.data,
+                    carbs=form.carbs.data,
+                    fat=form.fat.data,
+                    barcode=barcode,
+                    saturated_fat=form.saturated_fat.data,
+                    sugar=form.sugar.data,
+                )
+            )
+            db.session.commit()
+            print("[DEBUG] New FoodItem Added")
+        else:
+            print(f"Item exists: {item.barcode} {item.name}")
+
+        # Item added or already present, return to step 3.
+        return redirect(url_for("add_meal.step3", input=input))
+    else:
+        print("[DEBUG] Form Invalid")
+        return redirect(url_for("add_meal.step3_alt1", input=input))
 
 
 @bp.route("/step4", methods=["GET", "POST"])
