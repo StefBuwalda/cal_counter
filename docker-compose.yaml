@@ -1,9 +1,9 @@
-version: "3.9"
 services:
   app:
     build: .
-    container_name: my_python_sqlite_app
+    container_name: cal_counter
     ports:
-      - "5000:80"  # change if needed
+      - "5000:80"
     volumes:
-      - ./data:/app/instance  # maps host ./data to container /app/data
+      - ./data:/app/instance
+    restart: unless-stopped
