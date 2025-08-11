@@ -12,17 +12,23 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
+    must_change_password = db.Column(db.Boolean, nullable=False, default=False)
 
     food_items = db.relationship("FoodItem", lazy="dynamic", backref="user")
     food_logs = db.relationship("FoodLog", lazy="dynamic", backref="user")
 
     def __init__(
-        self, username: str, password: str, is_admin: bool = False
+        self,
+        username: str,
+        password: str,
+        is_admin: bool = False,
+        must_change_password: bool = False,
     ) -> None:
         super().__init__()
         self.username = username
         self.password = generate_password_hash(password=password)
         self.is_admin = is_admin
+        self.must_change_password = must_change_password
 
     def check_password(self, password: str) -> bool:
         return check_password_hash(pwhash=self.password, password=password)
