@@ -1,8 +1,9 @@
-from flask import Blueprint, request, render_template
+from flask import Blueprint, request, render_template, redirect, url_for
 from flask_login import current_user, login_user
-from forms import LoginForm
+from forms import LoginForm, ChangePasswordForm
 from models import User
 from application.utils import default_return
+from application import db
 
 bp = Blueprint(
     "auth",
@@ -28,3 +29,22 @@ def login():
             pass
             # invalid user
     return render_template("login.html", form=form)
+
+
+@bp.route("/change_password", methods=["GET", "POST"])
+def change_password():
+    if not current_user.is_authenticated:
+        return redirect(url_for("auth.login"))
+
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        cur_check = current_user.check_password(
+            password=form.current_password.data
+        )
+        eq_check = form.new_password.data == form.confirm_password.data
+        if cur_check and eq_check:
+            current_user.change_password(form.new_password.data)
+            current_user.set_pw_change(False)
+            db.session.commit()
+            return default_return()
+    return render_template("change_password.html", form=form)

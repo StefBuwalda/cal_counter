@@ -36,6 +36,9 @@ class User(UserMixin, db.Model):
     def change_password(self, password: str) -> None:
         self.password = generate_password_hash(password=password)
 
+    def set_pw_change(self, change: bool) -> None:
+        self.must_change_password = change
+
 
 class Unit(db.Model):
     __tablename__ = "unit"
