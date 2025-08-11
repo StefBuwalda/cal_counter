@@ -117,6 +117,7 @@ def step3_alt1_post(input: str):
             )
             db.session.commit()
             print("[DEBUG] New FoodItem Added")
+            input = barcode if barcode else name  # update input
         else:
             print(f"Item exists: {item.barcode} {item.name}")
 
