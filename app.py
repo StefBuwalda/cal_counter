@@ -17,6 +17,7 @@ from application import db, app, login_manager
 from application.admin.routes import admin_bp
 from application.user.routes import user_bp
 from application.add_meal.routes import bp as add_meal_bp
+from application.auth.routes import bp as auth_bp
 from typing import Optional
 
 # Config
@@ -34,6 +35,7 @@ def load_user(user_id: int):
 app.register_blueprint(admin_bp)
 app.register_blueprint(user_bp)
 app.register_blueprint(add_meal_bp)
+app.register_blueprint(auth_bp)
 
 
 # Routes

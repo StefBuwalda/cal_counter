@@ -12,6 +12,7 @@ from application import db
 from forms import FoodItemForm
 from models import FoodItem, FoodLog
 from datetime import datetime, timezone, timedelta
+from application.utils import login_required
 
 user_bp = Blueprint(
     "user",
@@ -20,10 +21,7 @@ user_bp = Blueprint(
 )
 
 
-@user_bp.before_request
-def login_required():
-    if not current_user.is_authenticated:
-        return redirect(url_for("login"))
+user_bp.before_request(login_required)
 
 
 @user_bp.route("/dashboard", methods=["GET"])
