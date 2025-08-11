@@ -102,7 +102,7 @@ def step3_alt1(input: str):
             )
             db.session.commit()
             print("[DEBUG] New item added")
-        return redirect(url_for("add_meal.step3", barcode=form.barcode.data))
+        return redirect(url_for("add_meal.step3", input=form.barcode.data))
     print("[DEBUG] Invalid form")
     if input.isdigit():
         form.barcode.data = input
