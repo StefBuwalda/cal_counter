@@ -14,7 +14,7 @@ def login_required():
 
 
 def default_return(next_page: Optional[str] = None):
-    return redirect(url_for("user.daily_log2"))
+    return redirect(url_for("user.daily_log"))
     if next_page:
         return redirect(next_page)
     if current_user.is_admin:
@@ -29,3 +29,54 @@ def is_valid_timezone(tz: str) -> bool:
         print(Exception)
         return False
     return True
+
+
+def macro_arr_to_json(data: list[float]):
+    assert len(data) == 4
+    cal = data[0]
+    pro = data[3]
+    car = data[2]
+    fat = data[1]
+    macros = [
+        {
+            "name": "Calories",
+            "current": cal,
+            "target": 2000,
+            "bar_width": 100 - abs(cal / 20 - 100),
+            "bar_width_overflow": max(0, cal / 20 - 100),
+            "unit": " kcal",
+            "color": "bg-calories",
+            "overflow_color": "bg-calories-dark",
+        },
+        {
+            "name": "Protein",
+            "current": pro,
+            "target": 150,
+            "bar_width": 100 - abs(pro / 1.5 - 100),
+            "bar_width_overflow": max(0, pro / 1.5 - 100),
+            "unit": "g",
+            "color": "bg-protein",
+            "overflow_color": "bg-protein-dark",
+        },
+        {
+            "name": "Carbs",
+            "current": car,
+            "target": 250,
+            "bar_width": 100 - abs(car / 2.5 - 100),
+            "bar_width_overflow": max(0, car / 2.5 - 100),
+            "unit": "g",
+            "color": "bg-carbs",
+            "overflow_color": "bg-carbs-dark",
+        },
+        {
+            "name": "Fat",
+            "current": fat,
+            "target": 70,
+            "bar_width": 100 - abs(fat / 0.7 - 100),
+            "bar_width_overflow": max(0, fat / 0.7 - 100),
+            "unit": "g",
+            "color": "bg-fat",
+            "overflow_color": "bg-fat-dark",
+        },
+    ]
+    return macros
