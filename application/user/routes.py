@@ -13,12 +13,65 @@ from forms import FoodItemForm
 from models import FoodItem, FoodLog
 from datetime import datetime, timezone, timedelta
 from application.utils import login_required
+from typing import cast
+from numpy import array
 
 user_bp = Blueprint(
     "user",
     __name__,
     template_folder="templates",
 )
+
+
+def macro_arr_to_json(data: list[float]):
+    assert len(data) == 4
+    cal = data[0]
+    pro = data[3]
+    car = data[2]
+    fat = data[1]
+    macros = [
+        {
+            "name": "Calories",
+            "current": cal,
+            "target": 2000,
+            "bar_width": 100 - abs(cal / 20 - 100),
+            "bar_width_overflow": max(0, cal / 20 - 100),
+            "unit": " kcal",
+            "color": "bg-calories",
+            "overflow_color": "bg-calories-dark",
+        },
+        {
+            "name": "Protein",
+            "current": pro,
+            "target": 150,
+            "bar_width": 100 - abs(pro / 1.5 - 100),
+            "bar_width_overflow": max(0, pro / 1.5 - 100),
+            "unit": "g",
+            "color": "bg-protein",
+            "overflow_color": "bg-protein-dark",
+        },
+        {
+            "name": "Carbs",
+            "current": car,
+            "target": 250,
+            "bar_width": 100 - abs(car / 2.5 - 100),
+            "bar_width_overflow": max(0, car / 2.5 - 100),
+            "unit": "g",
+            "color": "bg-carbs",
+            "overflow_color": "bg-carbs-dark",
+        },
+        {
+            "name": "Fat",
+            "current": fat,
+            "target": 70,
+            "bar_width": 100 - abs(fat / 0.7 - 100),
+            "bar_width_overflow": max(0, fat / 0.7 - 100),
+            "unit": "g",
+            "color": "bg-fat",
+            "overflow_color": "bg-fat-dark",
+        },
+    ]
+    return macros
 
 
 user_bp.before_request(login_required)
@@ -98,6 +151,18 @@ def daily_log(offset: int = 0):
         fat=fat,
         offset=offset,
     )
+
+
+@user_bp.route("/daily_log2", methods=["GET"])
+def daily_log2():
+    today = datetime.now(timezone.utc).date()
+    logs_today = current_user.food_logs.filter_by(date_=today).all()
+    macros = array((0.0, 0.0, 0.0, 0.0))
+    for log in logs_today:
+        item = cast(FoodItem, log.food_item)
+        macros += array(item.macros()) / 100 * log.amount
+    macros = macro_arr_to_json(macros.tolist())
+    return render_template("daily_log2.html", macros=macros, logs=logs_today)
 
 
 @user_bp.route("/remove_log/<int:id>", methods=["POST"])
