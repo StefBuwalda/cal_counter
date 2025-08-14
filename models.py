@@ -49,17 +49,18 @@ class Unit(db.Model):
 
 class FoodItem(db.Model):
     __tablename__ = "food_item"
+
     id = db.Column(db.Integer, primary_key=True)
     barcode = db.Column(db.String)
     owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     name = db.Column(db.String(150), nullable=False)
 
-    energy_100 = db.Column(db.Float, nullable=False)
-    protein_100 = db.Column(db.Float, nullable=False)
-    carbs_100 = db.Column(db.Float, nullable=False)
-    sugar_100 = db.Column(db.Float)
-    fat_100 = db.Column(db.Float, nullable=False)
-    saturated_fat_100 = db.Column(db.Float)
+    energy_100: float = db.Column(db.Float, nullable=False)
+    protein_100: float = db.Column(db.Float, nullable=False)
+    carbs_100: float = db.Column(db.Float, nullable=False)
+    sugar_100: Optional[float] = db.Column(db.Float)
+    fat_100: float = db.Column(db.Float, nullable=False)
+    saturated_fat_100: Optional[float] = db.Column(db.Float)
 
     food_logs = db.relationship(
         "FoodLog",
@@ -99,26 +100,20 @@ class FoodItem(db.Model):
 
     def updateFromForm(self, form: FoodItemForm):
         self.name = form.name.data
-        self.energy_100 = form.energy.data
-        self.protein_100 = form.protein.data
-        self.carbs_100 = form.carbs.data
+        self.energy_100 = form.energy.data or 0
+        self.protein_100 = form.protein.data or 0
+        self.carbs_100 = form.carbs.data or 0
         self.sugar_100 = form.sugar.data
-        self.fat_100 = form.fat.data
+        self.fat_100 = form.fat.data or 0
         self.saturated_fat_100 = form.saturated_fat.data
 
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "barcode": self.barcode,
-            "name": self.name,
-            "owner_id": self.owner_id,
-            "energy_100": self.energy_100,
-            "protein_100": self.protein_100,
-            "carbs_100": self.carbs_100,
-            "sugar_100": self.sugar_100,
-            "fat_100": self.fat_100,
-            "saturated_fat_100": self.saturated_fat_100,
-        }
+    def macros(self) -> tuple[float, float, float, float]:
+        return (
+            self.energy_100,
+            self.fat_100,
+            self.carbs_100,
+            self.protein_100,
+        )
 
 
 class FoodLog(db.Model):

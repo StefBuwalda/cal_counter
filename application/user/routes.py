@@ -13,12 +13,57 @@ from forms import FoodItemForm
 from models import FoodItem, FoodLog
 from datetime import datetime, timezone, timedelta
 from application.utils import login_required
+from typing import cast
+from numpy import array
 
 user_bp = Blueprint(
     "user",
     __name__,
     template_folder="templates",
 )
+
+
+def macro_arr_to_json(data: list[float]):
+    assert len(data) == 4
+    macros = [
+        {
+            "name": "Calories",
+            "current": data[0],
+            "target": 2000,
+            "percent": data[0] / 20,
+            "unit": " kcal",
+            "color": "bg-calories",
+            "overflow_color": "bg-calories-dark",
+        },
+        {
+            "name": "Protein",
+            "current": data[3],
+            "target": 150,
+            "percent": data[3] / 1.5,
+            "unit": "g",
+            "color": "bg-protein",
+            "overflow_color": "bg-protein-dark",
+        },
+        {
+            "name": "Carbs",
+            "current": data[2],
+            "target": 250,
+            "percent": data[2] / 2.5,
+            "unit": "g",
+            "color": "bg-carbs",
+            "overflow_color": "bg-carbs-dark",
+        },
+        {
+            "name": "Fat",
+            "current": data[1],
+            "target": 70,
+            "percent": data[1] / 0.7,
+            "unit": "g",
+            "color": "bg-fat",
+            "overflow_color": "bg-fat-dark",
+        },
+    ]
+    return macros
 
 
 user_bp.before_request(login_required)
@@ -98,6 +143,18 @@ def daily_log(offset: int = 0):
         fat=fat,
         offset=offset,
     )
+
+
+@user_bp.route("/daily_log2", methods=["GET"])
+def daily_log2():
+    today = datetime.now(timezone.utc).date()
+    logs_today = current_user.food_logs.filter_by(date_=today).all()
+    macros = array((0.0, 0.0, 0.0, 0.0))
+    for log in logs_today:
+        item = cast(FoodItem, log.food_item)
+        macros += array(item.macros()) / 100 * log.amount
+    macros = macro_arr_to_json(macros.tolist())
+    return render_template("daily_log2.html", macros=macros, logs=logs_today)
 
 
 @user_bp.route("/remove_log/<int:id>", methods=["POST"])

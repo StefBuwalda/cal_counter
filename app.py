@@ -5,7 +5,6 @@ from flask import (
 )
 from flask_login import (
     login_required,
-    logout_user,
     current_user,
 )
 from models import User
