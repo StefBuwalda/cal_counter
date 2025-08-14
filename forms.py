@@ -4,13 +4,20 @@ from wtforms import (
     PasswordField,
     SubmitField,
     FloatField,
+    HiddenField,
 )
 from wtforms.validators import DataRequired, InputRequired, Optional
+
+
+class SelectDateForm(FlaskForm):
+    date = HiddenField(validators=[DataRequired()])
+    submit = SubmitField("＋ Add Item")
 
 
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])
+    timezone = HiddenField("Timezone", validators=[DataRequired()])
     submit = SubmitField("Log in")
 
 

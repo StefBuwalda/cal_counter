@@ -4,6 +4,7 @@ from application import db
 from typing import Optional
 from forms import FoodItemForm
 from datetime import datetime, timezone, date
+from application.utils import is_valid_timezone
 
 
 class User(UserMixin, db.Model):
@@ -11,6 +12,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
+    timezone = db.Column(db.String(64), nullable=False, default="UTC")
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
     must_change_password = db.Column(db.Boolean, nullable=False, default=False)
 
@@ -38,6 +40,10 @@ class User(UserMixin, db.Model):
 
     def set_pw_change(self, change: bool) -> None:
         self.must_change_password = change
+
+    def set_timezone(self, tz: str) -> None:
+        if is_valid_timezone(tz):
+            self.timezone = tz
 
 
 class Unit(db.Model):

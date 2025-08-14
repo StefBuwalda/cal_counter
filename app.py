@@ -13,6 +13,7 @@ from application.admin.routes import admin_bp
 from application.user.routes import user_bp
 from application.add_meal.routes import bp as add_meal_bp
 from application.auth.routes import bp as auth_bp
+from application.add_meal_v2.routes import bp as add_meal_v2_bp
 from typing import Optional
 
 # Config
@@ -31,6 +32,7 @@ app.register_blueprint(admin_bp)
 app.register_blueprint(user_bp)
 app.register_blueprint(add_meal_bp)
 app.register_blueprint(auth_bp)
+app.register_blueprint(add_meal_v2_bp)
 
 
 # Routes
