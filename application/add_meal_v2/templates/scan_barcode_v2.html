@@ -58,7 +58,7 @@
             return;
         }
 
-        fetch(`{{url_for("add_meal.query")}}?q=${encodeURIComponent(query)}`)
+        fetch(`{{url_for("add_meal_v2.query")}}?q=${encodeURIComponent(query)}`)
             .then(response => response.json())
             .then(data => {
                 suggestionsBox.innerHTML = '';
