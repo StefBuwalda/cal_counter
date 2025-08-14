@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container d-flex flex-column justify-content-start align-items-center py-4" style="min-height: 100vh;">
+    <div class="card shadow-sm w-100" style="max-width: 480px;">
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title text-center mb-4">Item Scanner</h5>
+            <video id="camera" autoplay class="w-100 mb-3" style="aspect-ratio: 4/3;" muted></video>
+
+            <div class="mb-3">
+                <label for="manualSearch" class="form-label">Or search manually</label>
+                <input type="text" class="form-control" id="manualSearch" placeholder="Enter item name">
+            </div>
+
+            <ul class="list-group mb-3" id="searchResults"></ul>
+
+            <button class="btn btn-primary w-100" id="createItemBtn">Create New Item</button>
+        </div>
+    </div>
+</div>
+{% endblock%}
+
+{% block scripts %}
+<script>
+    const baseURL = "{{url_for('add_meal.select_item', input='!')}}";
+    const baseURL2 = "{{url_for('add_meal.add_new_item', input='!')}}";
+</script>
+<script type="module">
+    // Import barcode scanner
+    import { BrowserMultiFormatReader } from 'https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/+esm';
+
+    // constants
+    const codeReader = new BrowserMultiFormatReader();
+    const videoElement = document.getElementById('camera');
+
+    // Start async camera thingymibob
+    document.addEventListener('DOMContentLoaded', async () => {
+        console.log('[DEBUG] Page loaded, starting barcode scan');
+
+        try {
+            await navigator.mediaDevices.getUserMedia({ video: true });
+        } catch (err) {
+            alert("No camera found or no camera permission");
+            console.error("Could not access the camera:", err);
+            return;
+        }
+
+        console.log('[DEBUG] Permission given and at least one device present');
+        const devices = await codeReader.listVideoInputDevices();
+        console.log('[DEBUG] Cameras found:', devices);
+
+        const rearCamera = devices.find(device => device.label.toLowerCase().includes('back'))
+            || devices.find(device => device.label.toLowerCase().includes('rear'))
+            || devices[0]; // fallback
+
+        const selectedDeviceId = rearCamera?.deviceId;
+        await codeReader.decodeFromVideoDevice(selectedDeviceId, videoElement, async (result, err) => {
+            if (result) {
+                // Result found, redirect to the URL
+                console.log(result)
+                const codeText = result.getText();
+                window.location.href = baseURL.replace("!", encodeURIComponent(codeText));
+            }
+        });
+    });
+</script>
+
+<script>
+    const searchInput = document.getElementById('manualSearch');
+    const resultsList = document.getElementById('searchResults');
+    const createBtn = document.getElementById('createItemBtn');
+
+    let controller; // keeps track of the current fetch
+
+    // TODO: Debounce input, wait for user to stop typing (f.e. 300ms) 
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.toLowerCase();
+
+        // Check if there is enough input to fetch
+        if (query.length < 2) {
+            resultsList.innerHTML = '';
+            return;
+        }
+
+        if (controller) controller.abort(); // Abort previous fetch if still running
+        controller = new AbortController(); // new controller for this fetch
+        const signal = controller.signal;   // Signal to fetch to listen for aborts
+
+        fetch(`{{url_for("add_meal.query")}}?q=${encodeURIComponent(query)}`, { signal })
+            .then(response => response.json())
+            .then(data => {
+                resultsList.innerHTML = ''; // clear before appending
+                data.forEach(item => {
+                    // Create list item with button inside that changes the hidden form and submits it
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item p-0';
+                    const btn = document.createElement('button');
+                    btn.className = 'list-group-item list-group-item-action m-0 border-0';
+                    btn.style.width = '100%'; // make it fill the li
+                    btn.textContent = item;
+
+                    btn.addEventListener('click', () => {
+                        window.location.href = baseURL.replace("!", encodeURIComponent(item));
+                    });
+
+                    li.appendChild(btn);
+                    resultsList.appendChild(li);
+                });
+            }).catch(err => {
+                if (err.name == 'AbortError') {
+                    console.log("Fetch aborted");
+                }
+                if (err.name !== 'AbortError') {
+                    console.error('Fetch error:', err);
+                }
+            });
+    });
+</script>
+<script>
+    createBtn.addEventListener('click', () => {
+        const newItem = searchInput.value.trim()
+        window.location.href = newItem ? baseURL2.replace("!", encodeURIComponent(newItem)) : baseURL2;
+    });
+</script>
+
+{% endblock %}

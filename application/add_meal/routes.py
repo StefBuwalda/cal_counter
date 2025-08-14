@@ -17,9 +17,9 @@ from sqlalchemy.sql.elements import BinaryExpression
 from typing import cast
 
 bp = Blueprint(
-    "add_meal_v2",
+    "add_meal",
     __name__,
-    url_prefix="/add_meal_v2",
+    url_prefix="/add_meal",
     template_folder="templates",
 )
 
@@ -27,14 +27,14 @@ bp = Blueprint(
 def date_present(func):
     def check_date():
         if "selected_date" not in session:
-            return redirect(url_for("user.daily_log2"))
+            return redirect(url_for("user.daily_log"))
 
 
 def item_selected(func):
     def check_item():
         if check_item():
             if "item_id" not in session:
-                return redirect(url_for("add_meal_v2.get_barcode"))
+                return redirect(url_for("add_meal.find_item"))
 
 
 @bp.before_request
@@ -44,14 +44,14 @@ def login_required():
 
 
 @date_present
-@bp.route("/get_barcode", methods=["GET"])
-def get_barcode():
-    return render_template("scan_barcode_v2.html")
+@bp.route("/find_item", methods=["GET"])
+def find_item():
+    return render_template("find_item.html")
 
 
 @date_present
-@bp.route("/add_existing/<string:input>", methods=["GET"])
-def add_existing(input: str):
+@bp.route("/select_item/<string:input>", methods=["GET"])
+def select_item(input: str):
     # Check if input is a barcode
     if input.isdigit():
         item = current_user.food_items.filter_by(barcode=input).first()
@@ -61,28 +61,28 @@ def add_existing(input: str):
 
     if item is None:
         # Does not exist, add item
-        return redirect(url_for("add_meal_v2.add_new", input=input))
+        return redirect(url_for("add_meal.add_new_item", input=input))
 
     # Track item to add and continue to next step
     session["item_id"] = item.id
-    return redirect(url_for("add_meal_v2.step4"))
+    return redirect(url_for("add_meal.step4"))
 
 
 @date_present
-@bp.route("/add_new/<string:input>", methods=["GET"])
-def add_new(input: str):
+@bp.route("/add_new_item/<string:input>", methods=["GET"])
+def add_new_item(input: str):
     form = FoodItemForm()
 
     if input.isdigit():
         form.barcode.data = input
     else:
         form.name.data = input
-    return render_template("add_item.html", form=form)
+    return render_template("add_new_item.html", form=form)
 
 
 @date_present
-@bp.route("/add_new/<string:input>", methods=["POST"])
-def add_new_post(input: str):
+@bp.route("/add_new_item/<string:input>", methods=["POST"])
+def post_new_item(input: str):
     form = FoodItemForm()
 
     if form.validate_on_submit():
@@ -126,10 +126,10 @@ def add_new_post(input: str):
             print(f"Item exists: {item.barcode} {item.name}")
 
         # Item added or already present, return to step 3.
-        return redirect(url_for("add_meal_v2.add_existing", input=input))
+        return redirect(url_for("add_meal.select_item", input=input))
     else:
         print("[DEBUG] Form Invalid")
-        return redirect(url_for("add_meal_v2.add_new", input=input))
+        return redirect(url_for("add_meal.add_new_item", input=input))
 
 
 @date_present
@@ -139,7 +139,7 @@ def step4():
     form = FoodLogForm()
     item = db.session.get(FoodItem, session["item_id"])
     if not item:
-        return redirect(url_for("add_meal_v2.get_barcode"))
+        return redirect(url_for("add_meal.find_item"))
 
     if form.validate_on_submit():
         assert form.amount.data
@@ -156,9 +156,9 @@ def step4():
         db.session.commit()
         session.pop("item_id")
         session.pop("selected_date")
-        return redirect(url_for("user.daily_log2"))
+        return redirect(url_for("user.daily_log"))
 
-    return render_template("step4.html", tod="idk", item=item, form=form)
+    return render_template("step4.html", item=item, form=form)
 
 
 @date_present
