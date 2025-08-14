@@ -11,7 +11,6 @@ from models import User
 from application import db, app, login_manager
 from application.admin.routes import admin_bp
 from application.user.routes import user_bp
-from application.add_meal.routes import bp as add_meal_bp
 from application.auth.routes import bp as auth_bp
 from application.add_meal_v2.routes import bp as add_meal_v2_bp
 from typing import Optional
@@ -30,14 +29,13 @@ def load_user(user_id: int):
 # Register blueprints
 app.register_blueprint(admin_bp)
 app.register_blueprint(user_bp)
-app.register_blueprint(add_meal_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(add_meal_v2_bp)
 
 
 # Routes
 def default_return(next_page: Optional[str] = None):
-    return redirect(url_for("user.daily_log"))
+    return redirect(url_for("user.daily_log2"))
     if next_page:
         return redirect(next_page)
     if current_user.is_admin:

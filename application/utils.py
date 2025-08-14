@@ -14,7 +14,7 @@ def login_required():
 
 
 def default_return(next_page: Optional[str] = None):
-    return redirect(url_for("user.daily_log"))
+    return redirect(url_for("user.daily_log2"))
     if next_page:
         return redirect(next_page)
     if current_user.is_admin:

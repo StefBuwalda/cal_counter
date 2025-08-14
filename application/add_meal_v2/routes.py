@@ -126,10 +126,10 @@ def add_new_post(input: str):
             print(f"Item exists: {item.barcode} {item.name}")
 
         # Item added or already present, return to step 3.
-        return redirect(url_for("add_meal_v2.step3", input=input))
+        return redirect(url_for("add_meal_v2.add_existing", input=input))
     else:
         print("[DEBUG] Form Invalid")
-        return redirect(url_for("add_meal_v2.step3_alt1", input=input))
+        return redirect(url_for("add_meal_v2.add_new", input=input))
 
 
 @date_present

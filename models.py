@@ -134,7 +134,6 @@ class FoodLog(db.Model):
     food_item_id = db.Column(
         db.Integer, db.ForeignKey("food_item.id"), nullable=False
     )
-    part_of_day = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     amount = db.Column(db.Float, nullable=False)
 

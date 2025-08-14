@@ -178,6 +178,7 @@ def daily_log2():
         macros=macros,
         logs=logs_today,
         today=today.strftime("%d/%m/%Y"),
+        min=min,
     )
 
 
@@ -191,6 +192,4 @@ def remove_log(id: int):
     # Delete log
     db.session.delete(log)
     db.session.commit()
-    if "offset" in session:
-        return redirect(url_for("user.daily_log", offset=session["offset"]))
-    return redirect(url_for("user.daily_log"))
+    return redirect(url_for("user.daily_log2"))
