@@ -25,39 +25,47 @@ user_bp = Blueprint(
 
 def macro_arr_to_json(data: list[float]):
     assert len(data) == 4
+    cal = data[0]
+    pro = data[3]
+    car = data[2]
+    fat = data[1]
     macros = [
         {
             "name": "Calories",
-            "current": data[0],
+            "current": cal,
             "target": 2000,
-            "percent": data[0] / 20,
+            "bar_width": 100 - abs(cal / 20 - 100),
+            "bar_width_overflow": max(0, cal / 20 - 100),
             "unit": " kcal",
             "color": "bg-calories",
             "overflow_color": "bg-calories-dark",
         },
         {
             "name": "Protein",
-            "current": data[3],
+            "current": pro,
             "target": 150,
-            "percent": data[3] / 1.5,
+            "bar_width": 100 - abs(pro / 1.5 - 100),
+            "bar_width_overflow": max(0, pro / 1.5 - 100),
             "unit": "g",
             "color": "bg-protein",
             "overflow_color": "bg-protein-dark",
         },
         {
             "name": "Carbs",
-            "current": data[2],
+            "current": car,
             "target": 250,
-            "percent": data[2] / 2.5,
+            "bar_width": 100 - abs(car / 2.5 - 100),
+            "bar_width_overflow": max(0, car / 2.5 - 100),
             "unit": "g",
             "color": "bg-carbs",
             "overflow_color": "bg-carbs-dark",
         },
         {
             "name": "Fat",
-            "current": data[1],
+            "current": fat,
             "target": 70,
-            "percent": data[1] / 0.7,
+            "bar_width": 100 - abs(fat / 0.7 - 100),
+            "bar_width_overflow": max(0, fat / 0.7 - 100),
             "unit": "g",
             "color": "bg-fat",
             "overflow_color": "bg-fat-dark",

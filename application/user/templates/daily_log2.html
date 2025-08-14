@@ -16,11 +16,10 @@
             <span class="macro-text">{{ macro.name }}: {{ macro.current }} / {{ macro.target }}</span>
             <div class="progress rounded" style="height: 24px;">
                 <div class="progress-bar bg-danger macro-bar" role="progressbar"
-                    style="width: {{ macro.percent - 100 if macro.percent > 100 else 0}}%">
-                    {{ macro.current }}{{ macro.unit }}
+                    style="width: {{ macro.bar_width_overflow }}%">
+                    {{ macro.current - macro.target }}{{ macro.unit }}
                 </div>
-                <div class="progress-bar bg-success macro-bar" role="progressbar"
-                    style="width: {{ 0 if macro.percent > 200 else 200 - macro.percent if macro.percent > 100 else macro.percent }}%">
+                <div class="progress-bar bg-success macro-bar" role="progressbar" style="width: {{ macro.bar_width }}%">
                     {{ macro.current }}{{ macro.unit }}
                 </div>
             </div>
@@ -34,22 +33,35 @@
         <div class="list-group list-group-flush">
             {% for log in logs %}
             <div class="list-group-item item-row d-flex justify-content-between align-items-center bg-dark text-light">
-                {{ log.food_item.name }}
-                <span>{{ log.food_item.energy_100 }} kcal, {{ log.food_item.protein_100 }}g P, {{
-                    log.food_item.carbs_100 }}g C,
-                    {{ log.food_item.fat_100 }}g F</span>
+                <span>({{ log.amount }}g) {{ log.food_item.name }}</span>
+                <span>{{ log.food_item.energy_100 }} kcal</span>
             </div>
             {% endfor %}
         </div>
     </div>
+
+
 </div>
 
 <!-- Bottom Navigation Buttons -->
-<div class="container my-4">
-    <div class="d-flex justify-content-between">
-        <a href="" class="btn btn-outline-light flex-fill me-1">Previous Day</a>
-        <a href="" class="btn btn-outline-light flex-fill mx-1">+ Add Item</a>
-        <a href="" class="btn btn-outline-light flex-fill ms-1">Next Day</a>
+<div class="container-fluid fixed-bottom py-2">
+    <div class="d-flex p-3">
+        <!-- Left Button -->
+        <a href="" class="btn btn-outline-light flex-fill me-2 rounded-pill">
+            ‹ Previous
+        </a>
+
+        <!-- Center Button (highlighted) -->
+        <a href="{{ url_for('add_meal.step1', meal_type=0) }}"
+            class="btn btn-success flex-fill mx-2 fw-bold rounded-pill">
+            ＋ Add Item
+        </a>
+
+        <!-- Right Button -->
+        <a href="" class="btn btn-outline-light flex-fill ms-2 rounded-pill">
+            Next ›
+        </a>
     </div>
 </div>
+
 {% endblock %}
