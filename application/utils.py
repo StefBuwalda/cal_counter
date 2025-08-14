@@ -1,6 +1,7 @@
 from flask_login import current_user
 from flask import redirect, url_for, flash
 from typing import Optional
+from zoneinfo import ZoneInfo
 
 
 def login_required():
@@ -13,9 +14,18 @@ def login_required():
 
 
 def default_return(next_page: Optional[str] = None):
-    return redirect(url_for("user.daily_log"))
+    return redirect(url_for("user.daily_log2"))
     if next_page:
         return redirect(next_page)
     if current_user.is_admin:
         return redirect(url_for("admin.food_items"))
     return redirect(url_for("dashboard"))
+
+
+def is_valid_timezone(tz: str) -> bool:
+    try:
+        ZoneInfo(tz)
+    except Exception:
+        print(Exception)
+        return False
+    return True

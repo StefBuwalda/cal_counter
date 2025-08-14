@@ -1,8 +1,8 @@
-from flask import Blueprint, request, render_template, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for
 from flask_login import current_user, login_user, logout_user
 from forms import LoginForm, ChangePasswordForm
 from models import User
-from application.utils import default_return
+from application.utils import default_return, is_valid_timezone
 from application import db
 
 bp = Blueprint(
@@ -19,12 +19,16 @@ def login():
 
     form = LoginForm()
     if form.validate_on_submit():
+        assert form.timezone.data
         user = User.query.filter_by(username=form.username.data).first()
         if user and user.check_password(password=form.password.data):
             # User found and password correct
-            next_page = request.args.get("next")  # Get next page if given
+            tz = form.timezone.data
+            if is_valid_timezone(tz):
+                user.set_timezone(tz)
+                db.session.commit()
             login_user(user)  # Log in the user
-            return default_return(next_page=next_page)
+            return default_return()
         else:
             pass
             # invalid user

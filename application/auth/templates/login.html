@@ -3,7 +3,10 @@
 {% block content %}
 <div class="container d-flex justify-content-center align-items-center">
     <div class="card shadow-sm p-4" style="width: 100%; max-width: 400px;">
-        <h3 class="mb-4 text-center">Login</h3>
+        <h3 class="mb-1 text-center">Login</h3>
+        <p class="text-center text-muted small mb-4">
+            Your timezone will be saved to show times correctly.
+        </p>
         <form method="post">
             {{ form.hidden_tag() }}
 
@@ -27,10 +30,21 @@
                 {% endif %}
             </div>
 
+            {{ form.timezone(id="timezone") }}
+
             <div class="d-grid">
                 {{ form.submit(class="btn btn-primary btn-lg") }}
             </div>
         </form>
     </div>
 </div>
-{% endblock%}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tzField = document.getElementById('timezone');
+        tzField.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    });
+</script>
+{% endblock %}

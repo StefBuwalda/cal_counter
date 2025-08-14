@@ -85,7 +85,7 @@
     goButton.addEventListener('click', () => {
         const value = searchBox.value.trim();
         if (value) {
-            const baseURL = "{{url_for('add_meal.step3', input='!')}}";
+            const baseURL = "{{url_for('add_meal_v2.add_existing', input='!')}}";
             window.location.href = baseURL.replace("!", encodeURIComponent(value));
         }
     });
@@ -121,7 +121,7 @@
             if (result) {
                 // Result found, this should post the barcode
                 const codeText = result.getText();
-                const baseURL = "{{url_for('add_meal.step3', input='!')}}";
+                const baseURL = "{{url_for('add_meal_v2.add_existing', input='!')}}";
                 window.location.href = baseURL.replace("!", encodeURIComponent(codeText));
             }
         })
