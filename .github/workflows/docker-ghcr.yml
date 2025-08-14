@@ -34,3 +34,5 @@ jobs:
           push: true
           platforms: linux/arm64
           tags: ghcr.io/stefbuwalda/cal_counter:arm64,ghcr.io/stefbuwalda/cal_counter:latest
+          cache-from: type=registry,ref=ghcr.io/stefbuwalda/cal_counter:cache
+          cache-to: type=registry,ref=ghcr.io/stefbuwalda/cal_counter:cache,mode=max
