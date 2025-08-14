@@ -6,14 +6,13 @@ from flask import (
     session,
     request,
     jsonify,
-    abort,
 )
 from flask_login import current_user
 from forms import FoodItemForm, FoodLogForm
 from application import db
 from models import FoodItem, FoodLog
 from sqlalchemy import and_, or_
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 from sqlalchemy.sql.elements import BinaryExpression
 from typing import cast
 
@@ -25,31 +24,34 @@ bp = Blueprint(
 )
 
 
+def date_present(func):
+    def check_date():
+        if "selected_date" not in session:
+            return redirect(url_for("user.daily_log2"))
+
+
+def item_selected(func):
+    def check_item():
+        if check_item():
+            if "item_id" not in session:
+                return redirect(url_for("add_meal_v2.get_barcode"))
+
+
 @bp.before_request
 def login_required():
     if not current_user.is_authenticated:
         return redirect(url_for("auth.login"))
 
 
-@bp.route("/select_meal/<int:meal_type>", methods=["GET"])
-def step1(meal_type: int):
-    assert type(meal_type) is int
-    assert 0 <= meal_type <= 3
-    session["meal_type"] = meal_type
-    return redirect(url_for("add_meal.step2"))
-
-
+@date_present
 @bp.route("/get_barcode", methods=["GET"])
-def step2():
-    return render_template("scan_barcode.html")
+def get_barcode():
+    return render_template("scan_barcode_v2.html")
 
 
-@bp.route("/step3/<string:input>", methods=["GET"])
-def step3(input: str):
-    # check if meal_type cookie is set
-    if "meal_type" not in session:
-        return redirect("/")
-
+@date_present
+@bp.route("/add_existing/<string:input>", methods=["GET"])
+def add_existing(input: str):
     # Check if input is a barcode
     if input.isdigit():
         item = current_user.food_items.filter_by(barcode=input).first()
@@ -59,15 +61,16 @@ def step3(input: str):
 
     if item is None:
         # Does not exist, add item
-        return redirect(url_for("add_meal.step3_alt1", input=input))
+        return redirect(url_for("add_meal_v2.add_new", input=input))
 
     # Track item to add and continue to next step
     session["item_id"] = item.id
-    return redirect(url_for("add_meal.step4"))
+    return redirect(url_for("add_meal_v2.step4"))
 
 
-@bp.route("/step3_alt1/<string:input>", methods=["GET"])
-def step3_alt1(input: str):
+@date_present
+@bp.route("/add_new/<string:input>", methods=["GET"])
+def add_new(input: str):
     form = FoodItemForm()
 
     if input.isdigit():
@@ -77,8 +80,9 @@ def step3_alt1(input: str):
     return render_template("add_item.html", form=form)
 
 
-@bp.route("/step3_alt1/<string:input>", methods=["POST"])
-def step3_alt1_post(input: str):
+@date_present
+@bp.route("/add_new/<string:input>", methods=["POST"])
+def add_new_post(input: str):
     form = FoodItemForm()
 
     if form.validate_on_submit():
@@ -122,25 +126,20 @@ def step3_alt1_post(input: str):
             print(f"Item exists: {item.barcode} {item.name}")
 
         # Item added or already present, return to step 3.
-        return redirect(url_for("add_meal.step3", input=input))
+        return redirect(url_for("add_meal_v2.step3", input=input))
     else:
         print("[DEBUG] Form Invalid")
-        return redirect(url_for("add_meal.step3_alt1", input=input))
+        return redirect(url_for("add_meal_v2.step3_alt1", input=input))
 
 
+@date_present
+@item_selected
 @bp.route("/step4", methods=["GET", "POST"])
 def step4():
-    if "item_id" not in session:
-        return redirect(url_for("add_meal.step2"))
     form = FoodLogForm()
     item = db.session.get(FoodItem, session["item_id"])
-
-    offset = session["offset"]
-    if offset is None or item is None:
-        abort(404)
-
-    today = datetime.now(timezone.utc).date()
-    day = today + timedelta(days=offset)
+    if not item:
+        return redirect(url_for("add_meal_v2.get_barcode"))
 
     if form.validate_on_submit():
         assert form.amount.data
@@ -149,29 +148,21 @@ def step4():
                 food_item_id=item.id,
                 user_id=current_user.id,
                 amount=form.amount.data,
-                part_of_day=session["meal_type"],
-                date_=day,
+                part_of_day=0,
+                date_=datetime.strptime(
+                    session["selected_date"], "%Y-%m-%d"
+                ).date(),
             )
         )
         db.session.commit()
-        session.pop("meal_type")
         session.pop("item_id")
-        return redirect(url_for("user.daily_log", offset=offset))
+        session.pop("selected_date")
+        return redirect(url_for("user.daily_log2"))
 
-    match session["meal_type"]:
-        case 0:
-            tod = "Breakfast"
-        case 1:
-            tod = "Lunch"
-        case 2:
-            tod = "Dinner"
-        case 3:
-            tod = "Snack"
-        case _:
-            tod = "Unknown"
-    return render_template("step4.html", tod=tod, item=item, form=form)
+    return render_template("step4.html", tod="idk", item=item, form=form)
 
 
+@date_present
 @bp.route("/query", methods=["GET"])
 def query():
     q = request.args.get("q", "").strip().lower()

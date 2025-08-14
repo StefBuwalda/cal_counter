@@ -13,8 +13,8 @@ from forms import FoodItemForm
 from models import FoodItem, FoodLog
 from datetime import datetime, timezone, timedelta
 from application.utils import login_required
-from typing import cast
 from numpy import array
+from zoneinfo import ZoneInfo
 
 user_bp = Blueprint(
     "user",
@@ -155,14 +155,30 @@ def daily_log(offset: int = 0):
 
 @user_bp.route("/daily_log2", methods=["GET"])
 def daily_log2():
-    today = datetime.now(timezone.utc).date()
-    logs_today = current_user.food_logs.filter_by(date_=today).all()
+    # Get today's date according to user's timezone
+    today = datetime.now(ZoneInfo(current_user.timezone)).date()
+
+    # Save date in session
+    session["selected_date"] = today.isoformat()
+
+    # Get logs from today
+    logs_today = current_user.food_logs.filter_by(
+        date_=today.isoformat()
+    ).all()
+
+    # calculate macros
     macros = array((0.0, 0.0, 0.0, 0.0))
     for log in logs_today:
-        item = cast(FoodItem, log.food_item)
-        macros += array(item.macros()) / 100 * log.amount
+        macros += array(log.food_item.macros()) / 100 * log.amount
     macros = macro_arr_to_json(macros.tolist())
-    return render_template("daily_log2.html", macros=macros, logs=logs_today)
+
+    # Render HTML
+    return render_template(
+        "daily_log2.html",
+        macros=macros,
+        logs=logs_today,
+        today=today.strftime("%d/%m/%Y"),
+    )
 
 
 @user_bp.route("/remove_log/<int:id>", methods=["POST"])

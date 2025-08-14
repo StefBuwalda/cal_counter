@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/macros.css') }}">
 
 <div class="container my-4">
-    <h2 class="mb-3">Daily Calorie Dashboard</h2>
+    <h2 class="mb-3">Daily Calorie Dashboard ({{ today }})</h2>
 
     <!-- Macro Summary -->
     <div class="card p-3 mb-3">
@@ -52,7 +52,7 @@
         </a>
 
         <!-- Center Button (highlighted) -->
-        <a id="set_link_date" href="{{ url_for('add_meal.step1', meal_type=0) }}"
+        <a id="set_link_date" href="{{ url_for('add_meal_v2.get_barcode', meal_type=0) }}"
             class="btn btn-success flex-fill mx-2 fw-bold rounded-pill">
             ＋ Add Item
         </a>
@@ -64,21 +64,4 @@
     </div>
 </div>
 
-{% endblock %}
-
-{% block scripts %}
-<script>
-    function formatToday() {
-        const today = new Date();
-        const yyyy = today.getFullYear();
-        const mm = String(today.getMonth() + 1).padStart(2, '0');
-        const dd = String(today.getDate()).padStart(2, '0');
-        return `${yyyy}-${mm}-${dd}`;
-    }
-
-    const link = document.getElementById('set_link_date');
-    const todayString = formatToday();
-    // Set href on page load
-    link.href = `/select_date?date=${todayString}`;
-</script>
 {% endblock %}
