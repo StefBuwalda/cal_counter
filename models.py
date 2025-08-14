@@ -142,7 +142,6 @@ class FoodLog(db.Model):
         food_item_id: int,
         user_id: int,
         amount: float,
-        part_of_day: int,
         date_: Optional[date] = None,
     ):
         super().__init__()
@@ -151,4 +150,3 @@ class FoodLog(db.Model):
         self.amount = amount
         if date_ is not None:
             self.date_ = date_
-        self.part_of_day = part_of_day

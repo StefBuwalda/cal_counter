@@ -148,7 +148,6 @@ def step4():
                 food_item_id=item.id,
                 user_id=current_user.id,
                 amount=form.amount.data,
-                part_of_day=0,
                 date_=datetime.strptime(
                     session["selected_date"], "%Y-%m-%d"
                 ).date(),

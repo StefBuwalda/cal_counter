@@ -11,7 +11,7 @@ from flask_login import current_user
 from application import db
 from forms import FoodItemForm
 from models import FoodItem, FoodLog
-from datetime import datetime, timezone, timedelta
+from datetime import datetime
 from application.utils import login_required
 from numpy import array
 from zoneinfo import ZoneInfo
@@ -117,40 +117,6 @@ def edit_food_item(id: int):
             form.saturated_fat.data = item.saturated_fat_100
             return render_template("edit_food_item.html", form=form)
     return redirect(url_for("user.dashboard"))
-
-
-@user_bp.route("/", methods=["GET"])
-@user_bp.route("/<offset>", methods=["GET"])
-def daily_log(offset: int = 0):
-    try:
-        offset = int(offset)
-    except ValueError:
-        abort(400)  # or handle invalid input
-    today = datetime.now(timezone.utc).date()
-    day = today + timedelta(days=offset)
-    session["offset"] = offset
-    logs_today = current_user.food_logs.filter_by(date_=day).all()
-    logs = [[], [], [], []]
-    calories: float = 0
-    protein: float = 0
-    carbs: float = 0
-    fat: float = 0
-    for log in logs_today:
-        logs[log.part_of_day].append(log)
-        calories += log.amount * log.food_item.energy_100 / 100
-        protein += log.amount * log.food_item.protein_100 / 100
-        carbs += log.amount * log.food_item.carbs_100 / 100
-        fat += log.amount * log.food_item.fat_100 / 100
-    return render_template(
-        "daily_log.html",
-        date=(day.strftime("%d/%m/%y")),
-        logs=logs,
-        calories=calories,
-        protein=protein,
-        carbs=carbs,
-        fat=fat,
-        offset=offset,
-    )
 
 
 @user_bp.route("/daily_log2", methods=["GET"])
