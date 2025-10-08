@@ -1,8 +1,4 @@
-from flask import (
-    redirect,
-    url_for,
-    send_from_directory,
-)
+from flask import redirect, url_for, send_from_directory, render_template
 from flask_login import (
     login_required,
     current_user,
@@ -52,6 +48,12 @@ def default_return(next_page: Optional[str] = None):
 @login_required
 def index():
     return redirect(url_for("auth.login"))
+
+
+@app.route("/test")
+@login_required
+def text():
+    return render_template("newBase.html")
 
 
 @app.route("/favicon.ico")
