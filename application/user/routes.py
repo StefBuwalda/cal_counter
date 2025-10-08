@@ -15,6 +15,7 @@ from datetime import datetime
 from application.utils import login_required, macro_arr_to_json
 from numpy import array
 from zoneinfo import ZoneInfo
+from sqlalchemy import func
 
 user_bp = Blueprint(
     "user",
@@ -40,14 +41,23 @@ def daily_log():
     session["selected_date"] = today.isoformat()
 
     # Get logs from today
-    logs_today = current_user.food_logs.filter_by(
-        date_=today.isoformat()
-    ).all()
+    logs_today = (
+        current_user.food_logs.join(
+            FoodItem, FoodItem.id == FoodLog.food_item_id
+        )
+        .filter(FoodLog.date_ == today)
+        .group_by(FoodItem.id)
+        .with_entities(
+            FoodItem,  # the full object
+            func.sum(FoodLog.amount).label("total_amount"),
+        )
+        .all()
+    )
 
     # calculate macros
     macros = array((0.0, 0.0, 0.0, 0.0))
-    for log in logs_today:
-        macros += array(log.food_item.macros()) / 100 * log.amount
+    for food_item, amount in logs_today:
+        macros += array(food_item.macros()) / 100 * amount
     macros = macro_arr_to_json(macros.tolist())
 
     # Render HTML

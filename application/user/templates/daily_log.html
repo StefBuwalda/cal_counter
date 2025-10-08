@@ -29,22 +29,22 @@
     <div class="card p-3">
         <h5>Items Eaten Today</h5>
         <div class="list-group list-group-flush">
-            {% for log in logs %}
+            {% for food_item, amount in logs %}
             <div class="list-group-item d-flex align-items-center">
                 <!-- Weight: fixed width, right-aligned -->
                 <span class="text-end" style="width: 6ch; flex-shrink: 0;">
-                    ({{ log.amount | int }}g)
+                    ({{ amount | int }}g)
                 </span>
 
                 <!-- Food name: flexible, truncates if too long -->
                 <span class="text-truncate flex-grow-1"
                     style="min-width: 0; margin-left: 0.5rem; margin-right: 0.5rem;">
-                    {{ log.food_item.name }}
+                    {{ food_item.name }}
                 </span>
 
                 <!-- kcal: fixed width, right-aligned, pushed to the right -->
                 <span class="d-inline-block text-end ms-auto" style="width: 9ch; flex-shrink: 0;">
-                    {{ (log.food_item.energy_100 * log.amount / 100) | int }} kcal
+                    {{ (food_item.energy_100 * amount / 100) | int }} kcal
                 </span>
             </div>
             {% endfor %}
