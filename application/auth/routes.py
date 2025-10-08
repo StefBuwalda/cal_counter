@@ -35,25 +35,6 @@ def login():
     return render_template("login.html", form=form)
 
 
-@bp.route("/change_password", methods=["GET", "POST"])
-def change_password():
-    if not current_user.is_authenticated:
-        return redirect(url_for("auth.login"))
-
-    form = ChangePasswordForm()
-    if form.validate_on_submit():
-        cur_check = current_user.check_password(
-            password=form.current_password.data
-        )
-        eq_check = form.new_password.data == form.confirm_password.data
-        if cur_check and eq_check:
-            current_user.change_password(form.new_password.data)
-            current_user.set_pw_change(False)
-            db.session.commit()
-            return default_return()
-    return render_template("change_password.html", form=form)
-
-
 @bp.route("/change_pass", methods=["GET", "POST"])
 def change_pass():
     if not current_user.is_authenticated:
@@ -69,6 +50,7 @@ def change_pass():
             current_user.change_password(form.new_password.data)
             current_user.set_pw_change(False)
             db.session.commit()
+            logout_user()
             return default_return()
     return render_template("new_change_password.html", form=form)
 
