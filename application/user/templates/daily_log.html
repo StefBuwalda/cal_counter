@@ -11,14 +11,14 @@
         <h5>Macros</h5>
         {% for macro in macros %}
         <div class="mb-2">
-            <span class="macro-text">{{ macro.name }}: {{ macro.current }} / {{ macro.target }}</span>
+            <span class="macro-text">{{ macro.name }}: {{ macro.current | int }} / {{ macro.target }}</span>
             <div class="progress rounded" style="height: 24px;">
                 <div class="progress-bar bg-danger macro-bar" role="progressbar"
                     style="width: {{ macro.bar_width_overflow }}%">
-                    {{ (macro.current - macro.target) }}{{ macro.unit }}
+                    {{ (macro.current - macro.target) | int}}{{ macro.unit }}
                 </div>
                 <div class="progress-bar bg-success macro-bar" role="progressbar" style="width: {{ macro.bar_width }}%">
-                    {{ min(macro.current, macro.target) }}{{ macro.unit }}
+                    {{ min(macro.current, macro.target) | int }}{{ macro.unit }}
                 </div>
             </div>
         </div>
@@ -30,13 +30,29 @@
         <h5>Items Eaten Today</h5>
         <div class="list-group list-group-flush">
             {% for log in logs %}
-            <div class="list-group-item item-row d-flex justify-content-between align-items-center">
-                <span>({{ log.amount }}g) {{ log.food_item.name }}</span>
-                <span>{{ log.food_item.energy_100 * log.amount / 100 }} kcal</span>
+            <div class="list-group-item d-flex align-items-center">
+                <!-- Weight: fixed width, right-aligned -->
+                <span class="text-end" style="width: 6ch; flex-shrink: 0;">
+                    ({{ log.amount | int }}g)
+                </span>
+
+                <!-- Food name: flexible, truncates if too long -->
+                <span class="text-truncate flex-grow-1"
+                    style="min-width: 0; margin-left: 0.5rem; margin-right: 0.5rem;">
+                    {{ log.food_item.name }}
+                </span>
+
+                <!-- kcal: fixed width, right-aligned, pushed to the right -->
+                <span class="d-inline-block text-end ms-auto" style="width: 9ch; flex-shrink: 0;">
+                    {{ (log.food_item.energy_100 * log.amount / 100) | int }} kcal
+                </span>
             </div>
             {% endfor %}
         </div>
     </div>
+
+
+
 
 
 </div>
