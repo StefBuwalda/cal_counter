@@ -35,8 +35,8 @@ def login():
     return render_template("login.html", form=form)
 
 
-@bp.route("/change_password", methods=["GET", "POST"])
-def change_password():
+@bp.route("/change_pass", methods=["GET", "POST"])
+def change_pass():
     if not current_user.is_authenticated:
         return redirect(url_for("auth.login"))
 
@@ -50,8 +50,9 @@ def change_password():
             current_user.change_password(form.new_password.data)
             current_user.set_pw_change(False)
             db.session.commit()
+            logout_user()
             return default_return()
-    return render_template("change_password.html", form=form)
+    return render_template("new_change_password.html", form=form)
 
 
 @bp.route("/logout")
