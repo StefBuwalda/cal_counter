@@ -16,6 +16,11 @@ class User(UserMixin, db.Model):
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
     must_change_password = db.Column(db.Boolean, nullable=False, default=False)
 
+    protein = db.Column(db.Float, nullable=False)
+    carbohydrates = db.Column(db.Float, nullable=False)
+    fat = db.Column(db.Float, nullable=False)
+    calories = db.Column(db.Float, nullable=False)
+
     food_items = db.relationship("FoodItem", lazy="dynamic", backref="user")
     food_logs = db.relationship("FoodLog", lazy="dynamic", backref="user")
 
@@ -31,6 +36,15 @@ class User(UserMixin, db.Model):
         self.password = generate_password_hash(password=password)
         self.is_admin = is_admin
         self.must_change_password = must_change_password
+
+    def set_macros(
+        self, protein: float, carbs: float, fat: float, calories: float
+    ):
+        self.protein = protein
+        self.carbohydrates = carbs
+        self.fat = fat
+        self.calories = calories
+        return
 
     def check_password(self, password: str) -> bool:
         return check_password_hash(pwhash=self.password, password=password)

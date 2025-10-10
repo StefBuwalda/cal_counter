@@ -68,6 +68,30 @@ class FoodItemForm(FlaskForm):
     submit = SubmitField("Add Item")
 
 
+class MacroForm(FlaskForm):
+    protein = FloatField(
+        "Protein (g)",
+        validators=[InputRequired()],
+        render_kw={"inputmode": "decimal"},
+    )
+    carbohydrates = FloatField(
+        "Carbohydrates (g)",
+        validators=[InputRequired()],
+        render_kw={"inputmode": "decimal"},
+    )
+    fat = FloatField(
+        "Fat (g)",
+        validators=[InputRequired()],
+        render_kw={"inputmode": "decimal"},
+    )
+    calories = FloatField(
+        "Calories (kcal)",
+        validators=[InputRequired()],
+        render_kw={"inputmode": "decimal"},
+    )
+    submit = SubmitField("Update macros")
+
+
 class FoodLogForm(FlaskForm):
     amount = FloatField("amount of food (g/ml)", validators=[DataRequired()])
     submit = SubmitField("Log Item")

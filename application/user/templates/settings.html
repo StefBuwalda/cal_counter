@@ -1,0 +1,30 @@
+{% extends "base.html"%}
+
+{% block title %} Daily Macro Settings {% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4 text-center">Set Your Daily Macro Targets</h2>
+    <form action="{{ url_for('user.set_macros') }}" method="POST" class="card p-4 shadow-sm bg-body-secondary">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            <label for="protein" class="form-label">Protein (g)</label>
+            {{form.protein(class="form-control")}}
+        </div>
+        <div class="mb-3">
+            <label for="carbs" class="form-label">Carbohydrates (g)</label>
+            {{form.carbohydrates(class="form-control")}}
+        </div>
+        <div class="mb-3">
+            <label for="fat" class="form-label">Fat (g)</label>
+            {{form.fat(class="form-control")}}
+        </div>
+        <div class="mb-3">
+            <label for="calories" class="form-label">Calories (kcal)</label>
+            {{form.calories(class="form-control")}}
+        </div>
+        {{form.submit(class="btn btn-primary")}}
+    </form>
+
+</div>
+{% endblock %}
