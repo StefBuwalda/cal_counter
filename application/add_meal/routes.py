@@ -49,8 +49,9 @@ def find_item():
     return render_template("find_item.html")
 
 
+# TODO: Switch from this to query parameters / url args
 @date_present
-@bp.route("/select_item/<string:input>", methods=["GET"])
+@bp.route("/select_item/<path:input>", methods=["GET"])
 def select_item(input: str):
     # Check if input is a barcode
     if input.isdigit():
@@ -69,7 +70,7 @@ def select_item(input: str):
 
 
 @date_present
-@bp.route("/add_new_item/<string:input>", methods=["GET"])
+@bp.route("/add_new_item/<path:input>", methods=["GET"])
 def add_new_item(input: str):
     form = FoodItemForm()
 
@@ -81,7 +82,7 @@ def add_new_item(input: str):
 
 
 @date_present
-@bp.route("/add_new_item/<string:input>", methods=["POST"])
+@bp.route("/add_new_item/<path:input>", methods=["POST"])
 def post_new_item(input: str):
     form = FoodItemForm()
 
