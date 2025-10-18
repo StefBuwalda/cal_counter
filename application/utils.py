@@ -41,9 +41,11 @@ def macro_arr_to_json(data: list[float]):
         {
             "name": "Calories",
             "current": cal,
-            "target": 2000,
-            "bar_width": 100 - abs(cal / 20 - 100),
-            "bar_width_overflow": max(0, cal / 20 - 100),
+            "target": current_user.calories,
+            "bar_width": 100 - abs(cal * 100 / current_user.calories - 100),
+            "bar_width_overflow": max(
+                0, cal * 100 / current_user.calories - 100
+            ),
             "unit": " kcal",
             "color": "bg-calories",
             "overflow_color": "bg-calories-dark",
@@ -51,9 +53,11 @@ def macro_arr_to_json(data: list[float]):
         {
             "name": "Protein",
             "current": pro,
-            "target": 150,
-            "bar_width": 100 - abs(pro / 1.5 - 100),
-            "bar_width_overflow": max(0, pro / 1.5 - 100),
+            "target": current_user.protein,
+            "bar_width": 100 - abs(pro * 100 / current_user.protein - 100),
+            "bar_width_overflow": max(
+                0, pro * 100 / current_user.protein - 100
+            ),
             "unit": "g",
             "color": "bg-protein",
             "overflow_color": "bg-protein-dark",
@@ -61,9 +65,12 @@ def macro_arr_to_json(data: list[float]):
         {
             "name": "Carbs",
             "current": car,
-            "target": 250,
-            "bar_width": 100 - abs(car / 2.5 - 100),
-            "bar_width_overflow": max(0, car / 2.5 - 100),
+            "target": current_user.carbohydrates,
+            "bar_width": 100
+            - abs(car * 100 / current_user.carbohydrates - 100),
+            "bar_width_overflow": max(
+                0, car * 100 / current_user.carbohydrates - 100
+            ),
             "unit": "g",
             "color": "bg-carbs",
             "overflow_color": "bg-carbs-dark",
@@ -71,9 +78,9 @@ def macro_arr_to_json(data: list[float]):
         {
             "name": "Fat",
             "current": fat,
-            "target": 70,
-            "bar_width": 100 - abs(fat / 0.7 - 100),
-            "bar_width_overflow": max(0, fat / 0.7 - 100),
+            "target": current_user.fat,
+            "bar_width": 100 - abs(fat * 100 / current_user.fat - 100),
+            "bar_width_overflow": max(0, fat * 100 / current_user.fat - 100),
             "unit": "g",
             "color": "bg-fat",
             "overflow_color": "bg-fat-dark",

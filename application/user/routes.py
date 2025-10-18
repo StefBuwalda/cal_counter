@@ -9,7 +9,7 @@ from flask import (
 )
 from flask_login import current_user
 from application import db
-from forms import FoodItemForm
+from forms import FoodItemForm, MacroForm
 from models import FoodItem, FoodLog
 from datetime import datetime
 from application.utils import login_required, macro_arr_to_json
@@ -117,3 +117,20 @@ def remove_log(id: int):
     db.session.delete(log)
     db.session.commit()
     return redirect(url_for("user.daily_log"))
+
+
+@user_bp.route("/set_macros", methods=["GET", "POST"])
+def set_macros():
+    form = MacroForm()
+
+    if form.validate_on_submit():
+        current_user.set_macros(
+            form.protein.data,
+            form.carbohydrates.data,
+            form.fat.data,
+            form.calories.data,
+        )
+        db.session.commit()
+        return redirect(url_for("user.daily_log"))
+
+    return render_template("settings.html", form=form)
